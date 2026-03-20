@@ -1,23 +1,9 @@
 import React from 'react'
-import emailjs from "emailjs-com";
 
 function ContactForm() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        emailjs.sendForm(
-            "service_xx9tfv9",
-            "template_63z40io",
-            e.target,
-            "rR8-n63kCkYg7o5M_"
-        )
-        .then(() => {
-            alert("Message sent successfully!");
-        })
-        .catch((error) => {
-            console.error(error);
-            alert("Failed to send message");
-        });
     };
     return (
         <div className='2xl:min-w-[515px]'>
