@@ -2,14 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { NavLink, useLocation } from 'react-router-dom';
 import hoverSound from '/dragon-studio-futuristic-transition-499653.mp3';
+import imgHome from '/home.png';
+import imgCircleInfo from '/circle-info.png';
+import imgGlobe from '/globe.png';
+import imgUsers from '/users.png';
+import imgHand from '/hand.png';
+import imgPhone from '/phone.png';
 
-// icons
-const imgHome = 'https://www.figma.com/api/mcp/asset/d606dd8b-e5bb-4bea-8ab0-8e57522cef42';
-const imgCircleInfo = 'https://www.figma.com/api/mcp/asset/bb53456b-6a1b-4fcb-805c-aac899b304e9';
-const imgGlobe = 'https://www.figma.com/api/mcp/asset/c44951b2-66fc-43a9-838f-13602927e24f';
-const imgUsers = 'https://www.figma.com/api/mcp/asset/5b4a22a2-698f-448d-a0ca-41a418f01420';
-const imgHand = 'https://www.figma.com/api/mcp/asset/986cd62f-8f1d-4232-ae7a-3d29419845cc';
-const imgPhone = 'https://www.figma.com/api/mcp/asset/e9919d33-a6ae-407c-9456-e485a82f2798';
 
 const NAV_ITEMS = [
   { path: '/', img: imgHome, label: 'Dashboard' },

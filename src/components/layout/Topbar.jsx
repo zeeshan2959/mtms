@@ -1,8 +1,6 @@
 import { useMediaQuery } from "react-responsive";
 import { Link } from "react-router-dom";
-
-// Figma logo asset — node 1:1576 "Logo" frame
-const imgLogo = 'https://www.figma.com/api/mcp/asset/2333ea04-0561-49a3-9a0a-b2d07f7def29';
+import imgLogo from '/Logo.svg';
 
 export default function Topbar() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
