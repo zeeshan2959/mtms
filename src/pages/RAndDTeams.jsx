@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import clickSoundFile from "/dragon-studio-futuristic-transition-499653.mp3";
+import imgServices from '/services.png';
 
 const clickAudio = new Audio(clickSoundFile);
 
@@ -148,11 +149,11 @@ export default function RAndDTeams() {
             fontFamily: 'Poppins, sans-serif',
             color: 'rgba(255,255,255,0.60)',
             lineHeight: 1.7,
-            maxWidth: 420,
+            maxWidth: 920,
           }}
         >
-          Lorem ipsum dolor sit amet consectetur. Tellus blandit pellentesque duis eu at.
-          Id sociis augue.
+          End-to-End engineering excellence — from concept design to validation and compliance. Our integrated approach ensures seamless development, precise release management, and uncompromised quality at every stage.
+
         </p>
       </div>
 
@@ -255,7 +256,7 @@ export default function RAndDTeams() {
 
           {/* Description */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            {active.description.split('\n\n').map((para, pi) => (
+            {/* {active.description.split('\n\n').map((para, pi) => (
               <p
                 key={pi}
                 style={{
@@ -268,7 +269,8 @@ export default function RAndDTeams() {
               >
                 {para}
               </p>
-            ))}
+            ))} */}
+            <img src={imgServices} alt="Services" />
           </div>
 
           {/* ── Prev / Next navigation ── (Figma: bottom-right of content panel) */}

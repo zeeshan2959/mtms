@@ -25,7 +25,7 @@ export default function About() {
       <div>
         <div className="mt-4 flex gap-0 rounded-[15px] max-w-[300px] sm:max-w-[440px] 3xl:max-w-[567px] ml-auto md:mx-auto px-[15px] sm:px-[30px] 3xl:px-[35px] py-[20px] font-normal md:font-medium bg-[rgba(221,221,221,0.20)]" style={{ fontFamily: 'Poppins, sans-serif'}}>
           <p className='text-white text-sm md:text-[14px] 2xl:text-[16px] font-normal 3xl:font-medium' style={{ fontFamily: 'Poppins, sans-serif' }}>
-            Lorem ipsum dolor sit amet consectetur. Imperdiet sed adipiscing sagittis egestas. Porta vitae vel enim nunc. Eget maecenas tincidunt.
+            Our clients are bases across North America, South America, Asia-Pecific and EMEA, reflecting our global approach to engineering collaboration. We support orgranizations operating in diverse and demanding industries, working closely with Tier-1 suppliers and OEMs.
           </p>
         </div>
       </div>

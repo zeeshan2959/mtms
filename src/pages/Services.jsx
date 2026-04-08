@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import clickSoundFile from "/dragon-studio-futuristic-transition-499653.mp3";
+import imgServices from '/services.png';
 
 const clickAudio = new Audio(clickSoundFile);
 
@@ -96,11 +97,11 @@ function tabOpacity(delta) {
 
 function playClickSound() {
   clickAudio.currentTime = 0; // restart if spam clicking
-  clickAudio.play().catch(() => {});
+  clickAudio.play().catch(() => { });
 }
 
 export default function Sercices() {
-  const [activeIndex, setActiveIndex] = useState(2); 
+  const [activeIndex, setActiveIndex] = useState(2);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({
     minWidth: 769,
@@ -148,11 +149,11 @@ export default function Sercices() {
             fontFamily: 'Poppins, sans-serif',
             color: 'rgba(255,255,255,0.60)',
             lineHeight: 1.7,
-            maxWidth: 420,
+            maxWidth: 920,
           }}
         >
-          Lorem ipsum dolor sit amet consectetur. Tellus blandit pellentesque duis eu at.
-          Id sociis augue.
+          End-to-End engineering excellence — from concept design to validation and compliance.Our integrated approach ensures seamless development, precise release management, and uncompromised quality at every stage.
+
         </p>
       </div>
 
@@ -160,7 +161,7 @@ export default function Sercices() {
       <div className='pl-32 flex flex-col lg:flex-row items-center lg:flex-start justify-end gap-0'>
         {/* ── Left panel: staircase tab list (414 × 556 px — exact Figma) ── */}
         <div
-        className='hidden sm:block'
+          className='hidden sm:block'
           style={{
             position: 'relative',
             width: isMobile ? '100%' : isTablet ? 414 : isDesktop ? 414 : isWeb ? 514 : 514,
@@ -196,7 +197,7 @@ export default function Sercices() {
                   color: '#ffffff',
                   fontFamily: 'Poppins, sans-serif',
                   fontWeight: 700,
-                  fontSize: isMobile ? 12 : isTablet ? 14 : isDesktop ? 16 : 22,       
+                  fontSize: isMobile ? 12 : isTablet ? 14 : isDesktop ? 16 : 22,
                   textAlign: 'center',
                   lineHeight: 1.25,
                   whiteSpace: 'pre-line',  // honour \n line breaks in name
@@ -255,7 +256,7 @@ export default function Sercices() {
 
           {/* Description */}
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            {active.description.split('\n\n').map((para, pi) => (
+            {/* {active.description.split('\n\n').map((para, pi) => (
               <p
                 key={pi}
                 style={{
@@ -268,7 +269,8 @@ export default function Sercices() {
               >
                 {para}
               </p>
-            ))}
+            ))} */}
+            <img src={imgServices} alt="Services" />
           </div>
 
           {/* ── Prev / Next navigation ── (Figma: bottom-right of content panel) */}
@@ -283,7 +285,7 @@ export default function Sercices() {
           >
             {/* Counter */}
             <span
-            className='hidden md:block'
+              className='hidden md:block'
               style={{
                 marginRight: 'auto',
                 fontSize: 11,
@@ -302,7 +304,7 @@ export default function Sercices() {
 
             {/* Next → */}
             <RoundBtn onClick={goNext} disabled={!canNext} label="Next">
-            <ArrowRight size={20}/>
+              <ArrowRight size={20} />
             </RoundBtn>
           </div>
 
