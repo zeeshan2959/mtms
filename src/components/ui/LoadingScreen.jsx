@@ -41,9 +41,9 @@ function ProgressRing({ progress, size = 220, stroke = 4 }) {
       />
       <defs>
         <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#c0392b" />
-          <stop offset="50%" stopColor="#e67e22" />
-          <stop offset="100%" stopColor="#f1c40f" />
+          <stop offset="0%" stopColor="#1d4ed8" />
+          <stop offset="50%" stopColor="#2563eb" />
+          <stop offset="100%" stopColor="#38bdf8" />
         </linearGradient>
       </defs>
     </svg>
@@ -178,8 +178,8 @@ export default function LoadingScreen({ isReady, onComplete }) {
           100% { background-position: 400px 0; }
         }
         @keyframes continueGlow {
-          0%, 100% { box-shadow: 0 0 20px rgba(230,126,34,0.4), 0 0 40px rgba(230,126,34,0.2); }
-          50%       { box-shadow: 0 0 35px rgba(230,126,34,0.7), 0 0 70px rgba(230,126,34,0.35); }
+          0%, 100% { box-shadow: 0 0 20px rgba(37,99,235,0.4), 0 0 40px rgba(37,99,235,0.2); }
+          50%       { box-shadow: 0 0 35px rgba(37,99,235,0.7), 0 0 70px rgba(37,99,235,0.35); }
         }
         @keyframes spin-slow {
           from { transform: rotate(0deg); }
@@ -196,7 +196,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
         }
         .sweep {
           position: absolute; left: 0; right: 0; height: 120px;
-          background: linear-gradient(to bottom, transparent, rgba(230,126,34,0.04), transparent);
+          background: linear-gradient(to bottom, transparent, rgba(37,99,235,0.04), transparent);
           animation: scanline 4s linear infinite; pointer-events: none; z-index: 2;
         }
       `}</style>
@@ -207,7 +207,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
       {/* Ambient glow */}
       <div style={{
         position: "absolute", width: 600, height: 600, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(192,57,43,0.06) 0%, transparent 70%)",
+        background: "radial-gradient(circle, rgba(29,78,216,0.06) 0%, transparent 70%)",
         top: "50%", left: "50%", transform: "translate(-50%, -50%)",
         animation: "pulse-glow 3s ease-in-out infinite", pointerEvents: "none",
       }} />
@@ -221,7 +221,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
       ].map((style, i) => (
         <div key={i} style={{
           position: "absolute", width: 40, height: 40,
-          borderColor: "rgba(230,126,34,0.35)", ...style,
+          borderColor: "rgba(37,99,235,0.35)", ...style,
         }} />
       ))}
 
@@ -239,15 +239,15 @@ export default function LoadingScreen({ isReady, onComplete }) {
             }}>
               <div style={{
                 width: 6, height: 6, borderRadius: "50%",
-                background: reached ? "#e67e22" : "rgba(255,255,255,0.15)",
-                boxShadow: isActive ? "0 0 8px rgba(230,126,34,0.8)" : "none",
+                background: reached ? "#2563eb" : "rgba(255,255,255,0.15)",
+                boxShadow: isActive ? "0 0 8px rgba(37,99,235,0.8)" : "none",
                 transition: "background 0.3s, box-shadow 0.3s",
               }} />
               <span style={{
                 fontSize: 9,
                 fontWeight: 600,
                 letterSpacing: "0.1em",
-                color: reached ? (isActive ? "#e67e22" : "rgba(255,255,255,0.45)") : "rgba(255,255,255,0.15)",
+                color: reached ? (isActive ? "#2563eb" : "rgba(255,255,255,0.45)") : "rgba(255,255,255,0.15)",
                 transition: "color 0.3s",
               }}>
                 {milestone}%
@@ -264,7 +264,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
           animation: done ? "none" : "spin-slow 8s linear infinite",
         }}>
           <circle cx={110} cy={110} r={106} fill="none"
-            stroke="rgba(230,126,34,0.15)" strokeWidth={1} strokeDasharray="3 8" />
+            stroke="rgba(37,99,235,0.15)" strokeWidth={1} strokeDasharray="3 8" />
         </svg>
 
         <svg width={220} height={220} style={{
@@ -272,7 +272,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
           animation: done ? "none" : "counter-spin 5s linear infinite",
         }}>
           <circle cx={110} cy={110} r={98} fill="none"
-            stroke="rgba(192,57,43,0.18)" strokeWidth={0.8} strokeDasharray="2 12" />
+            stroke="rgba(29,78,216,0.18)" strokeWidth={0.8} strokeDasharray="2 12" />
         </svg>
 
         <RingTicks size={220} />
@@ -338,7 +338,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
           }}>
             <div style={{
               height: "100%", width: `${progress}%`,
-              background: "linear-gradient(90deg, #c0392b, #e67e22, #f1c40f)",
+              background: "linear-gradient(90deg, #1d4ed8, #2563eb, #38bdf8)",
               transition: "width 0.3s linear", borderRadius: 2,
             }} />
             {/* Milestone tick marks on bar */}
@@ -347,7 +347,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
                 position: "absolute", top: "50%",
                 left: `${m}%`, transform: "translate(-50%, -50%)",
                 width: 1, height: 8,
-                background: pctDisplay >= m ? "rgba(230,126,34,0.6)" : "rgba(255,255,255,0.15)",
+                background: pctDisplay >= m ? "rgba(37,99,235,0.6)" : "rgba(255,255,255,0.15)",
                 transition: "background 0.3s",
               }} />
             ))}
@@ -360,7 +360,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
         <div style={{
           fontFamily: "'Rajdhani', sans-serif",
           fontSize: 11, letterSpacing: "0.25em",
-          color: "rgba(230,126,34,0.5)",
+          color: "rgba(37,99,235,0.5)",
           textTransform: "uppercase",
           animation: "pulse-glow 1.5s ease-in-out infinite",
         }}>
@@ -378,13 +378,13 @@ export default function LoadingScreen({ isReady, onComplete }) {
             fontSize: 13, fontWeight: 600,
             letterSpacing: "0.25em", textTransform: "uppercase",
             color: "#fff", background: "transparent",
-            border: "1px solid rgba(230,126,34,0.6)",
+            border: "1px solid rgba(37,99,235,0.6)",
             cursor: "pointer",
             animation: "fadeUp 0.5s ease both, continueGlow 2s ease-in-out infinite",
             position: "relative", overflow: "hidden",
             transition: "background 0.3s, color 0.3s",
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = "rgba(230,126,34,0.15)"; }}
+          onMouseEnter={e => { e.currentTarget.style.background = "rgba(37,99,235,0.15)"; }}
           onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
         >
           <span style={{

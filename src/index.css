@@ -107,6 +107,30 @@
   .badge-yellow { @apply badge bg-yellow-500/20 text-yellow-400; }
 }
 
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.992);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.page-enter {
+  animation: pageEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+}
+
 @font-face {
   font-family: 'Daminga';
   src: url('/fonts/DamingaBold_PERSONAL_USE_ONLY.otf') format('opentype');
