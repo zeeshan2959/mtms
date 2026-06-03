@@ -122,7 +122,7 @@ export default function AnimatedBackground({ className = "", style }) {
       const cssW = container.clientWidth;
       const cssH = container.clientHeight;
       waveCtx.clearRect(0, 0, cssW, cssH);
-      waveCtx.fillStyle = "#1d4ed8";
+      waveCtx.fillStyle = "rgb(18, 223, 234)";
 
       for (const { x, y, flip } of placements) {
         // Diagonal phase offset so the shimmer sweeps across the grid.
@@ -242,11 +242,16 @@ export default function AnimatedBackground({ className = "", style }) {
           position: absolute; top: 42%; left: -6%;
           width: 40vw; height: 40vw; max-width: 1000px; max-height: 1000px;
           border-radius: 50%;
-          background: radial-gradient(circle at 50% 50%,
-            rgba(56,201,160,0.95) 0%,
-            rgba(35,118,140,0.55) 38%,
-            rgba(35,118,140,0) 70%);
-          filter: blur(90px);
+          background: radial-gradient(
+            circle at 50% 50%,
+            #2D9297 0%,
+            #2D9297 14%,
+            rgba(45, 146, 151, 0.88) 26%,
+            #212E60 48%,
+            rgba(17, 22, 61, 0.72) 68%,
+            rgba(17, 22, 61, 0) 82%
+          );
+          filter: blur(90px) saturate(1.15);
           mix-blend-mode: screen;
           animation: bgBlobMain 14s ease-in-out infinite;
         }
