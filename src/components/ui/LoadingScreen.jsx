@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 
 const LOGO_STAGES = [
-  { pct: 0,   src: "/PropertyVarient1.png",  label: "Initializing…" },
-  { pct: 20,  src: "/PropertyVariant2.png", label: "Loading assets…" },
-  { pct: 40,  src: "/PropertyVariant3.png", label: "Building systems…" },
-  { pct: 60,  src: "/PropertyVariant4.png", label: "Calibrating…" },
-  { pct: 80,  src: "/PropertyVariant5.png", label: "Almost ready…" },
-  { pct: 100, src: "/PropertyVariant6.png", label: "Ready" },
+  { pct: 0,   src: "/first_frame.svg",  label: "Initializing…" },
+  { pct: 20,  src: "/secound_frame.svg", label: "Loading assets…" },
+  { pct: 40,  src: "/third_frame.svg", label: "Building systems…" },
+  { pct: 60,  src: "/forth_frame.svg", label: "Calibrating…" },
+  { pct: 80,  src: "/fifth_frame.svg", label: "Almost ready…" },
+  { pct: 100, src: "/fifth_frame.svg", label: "Ready" },
 ];
 
 function getLogoForProgress(pct) {

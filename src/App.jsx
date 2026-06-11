@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { PageTransitionDirectionProvider } from './context/PageTransitionDirectionContext';
 import MainLayout from './components/layout/MainLayout';
 import Dashboard from './pages/Dashboard';
 import Contact from './pages/Contact';
@@ -10,6 +11,7 @@ import Domain from './pages/Domain';
 function App() {
   return (
     <BrowserRouter>
+      <PageTransitionDirectionProvider>
       <MainLayout>
         <Routes>
           <Route path="/"             element={<Dashboard />} />
@@ -20,6 +22,7 @@ function App() {
           <Route path="/teams"     element={<RAndDTeams />} />
         </Routes>
       </MainLayout>
+      </PageTransitionDirectionProvider>
     </BrowserRouter>
   );
 }

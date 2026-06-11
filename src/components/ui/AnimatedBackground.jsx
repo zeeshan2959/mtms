@@ -1,11 +1,10 @@
 import { useEffect, useRef } from "react";
+import { usePageTransitionDirection } from "../../context/PageTransitionDirectionContext";
 import pattern from '/triangle.svg';
 
-// Geometry of a single tile (matches the old `w-20 h-16` cells).
 const CELL_W = 80;
 const CELL_H = 64;
 
-// The blue shimmer triangle (old `.shape` clip-path), in normalized cell space.
 const SHAPE_POINTS = [
   [0.5, 0],
   [0.525, 0.6],
@@ -16,14 +15,95 @@ const SHAPE_POINTS = [
   [0.475, 0.6],
 ];
 
-const WAVE_PERIOD = 3;     // seconds, matches `shapeWave 3s`
 const OPACITY_MIN = 0.12;
 const OPACITY_MAX = 0.9;
+const BURST_DURATION = 1.4;
+
+function wavePhaseDelay(x, y, patternId, cssW, cssH) {
+  const col = x / CELL_W;
+  const row = y / CELL_H;
+  const cx = cssW / 2;
+  const cy = cssH / 2;
+  const dist = Math.hypot(x - cx, y - cy);
+  const maxDist = Math.hypot(cx, cy) || 1;
+  const angle = Math.atan2(y - cy, x - cx);
+
+  switch (patternId) {
+    case "cascade-down":
+      return row * 0.14;
+    case "cascade-up":
+      return ((cssH - y) / CELL_H) * 0.14;
+    case "sweep-right":
+      return col * 0.14;
+    case "sweep-left":
+      return ((cssW - x) / CELL_W) * 0.14;
+    case "ripple":
+      return (dist / CELL_W) * 0.1;
+    case "spiral":
+      return ((angle / (2 * Math.PI)) + 1 + dist / (CELL_W * 6)) * 0.55;
+    case "checker":
+      return ((Math.floor(col) + Math.floor(row)) % 2) * 0.75;
+    case "diagonal":
+    default:
+      return col * 0.12 + row * 0.06;
+  }
+}
+
+function burstPhase(x, y, patternId, cssW, cssH) {
+  const cx = cssW / 2;
+  const cy = cssH / 2;
+  const dist = Math.hypot(x - cx, y - cy);
+  const maxDist = Math.hypot(cx, cy) || 1;
+  const angle = Math.atan2(y - cy, x - cx);
+
+  switch (patternId) {
+    case "cascade-down":
+      return y / cssH;
+    case "cascade-up":
+      return 1 - y / cssH;
+    case "sweep-right":
+      return x / cssW;
+    case "sweep-left":
+      return 1 - x / cssW;
+    case "ripple":
+      return dist / maxDist;
+    case "spiral":
+      return ((angle / (2 * Math.PI)) + 1 + dist / maxDist) / 2;
+    case "checker":
+      return ((x / CELL_W + y / CELL_H) % 2) / 2;
+    case "diagonal":
+    default:
+      return (x / cssW + y / cssH) / 2;
+  }
+}
+
+function burstBoost(x, y, patternId, cssW, cssH, progress) {
+  const front = progress * 1.25;
+  const phase = burstPhase(x, y, patternId, cssW, cssH);
+  const dist = Math.abs(phase - front);
+  if (dist > 0.18) return 0;
+  const falloff = 1 - dist / 0.18;
+  return falloff * falloff * 0.55;
+}
 
 export default function AnimatedBackground({ className = "", style }) {
+  const wavePattern = usePageTransitionDirection();
+  const patternRef = useRef(wavePattern);
+  patternRef.current = wavePattern;
+
+  const burstStartRef = useRef(null);
+  const prevPatternIdRef = useRef(wavePattern.id);
+
   const baseCanvasRef = useRef(null);
   const waveCanvasRef = useRef(null);
   const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (wavePattern.id !== prevPatternIdRef.current) {
+      prevPatternIdRef.current = wavePattern.id;
+      burstStartRef.current = performance.now();
+    }
+  }, [wavePattern.id]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -43,13 +123,9 @@ export default function AnimatedBackground({ className = "", style }) {
     let running = false;
     let visible = true;
 
-    // Grey faceted triangle tile.
     const tileImg = new Image();
     let tileReady = false;
 
-    // Rebuild the gap-free tessellation: upward triangles on the grid plus
-    // half-cell-offset downward (flipped) triangles that fill the gaps between
-    // them. Called on resize.
     const buildLayout = () => {
       const cssW = container.clientWidth;
       const cssH = container.clientHeight;
@@ -61,15 +137,12 @@ export default function AnimatedBackground({ className = "", style }) {
         const y = row * CELL_H;
         for (let col = 0; col <= cols; col++) {
           const x = col * CELL_W;
-          // Upward triangle on the grid.
           placements.push({ x, y, flip: false });
-          // Downward triangle, shifted half a cell, fills the gap.
           placements.push({ x: x - CELL_W / 2, y, flip: true });
         }
       }
     };
 
-    // Draw the static grey tessellation once per resize.
     const drawBase = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const cssW = container.clientWidth;
@@ -117,21 +190,37 @@ export default function AnimatedBackground({ className = "", style }) {
       ctx.closePath();
     };
 
-    // Draw one frame of the blue shimmer wave.
-    const drawWave = (timeSec) => {
+    const drawWave = (timeMs) => {
       const cssW = container.clientWidth;
       const cssH = container.clientHeight;
+      const { id, period, color } = patternRef.current;
+      const timeSec = timeMs / 1000;
+      const wavePeriod = period ?? 3;
+
       waveCtx.clearRect(0, 0, cssW, cssH);
-      waveCtx.fillStyle = "rgb(18, 223, 234)";
+      waveCtx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+
+      let burstProgress = 1;
+      if (burstStartRef.current != null) {
+        burstProgress = (timeMs - burstStartRef.current) / (BURST_DURATION * 1000);
+        if (burstProgress >= 1) {
+          burstStartRef.current = null;
+          burstProgress = 1;
+        }
+      }
 
       for (const { x, y, flip } of placements) {
-        // Diagonal phase offset so the shimmer sweeps across the grid.
-        const delay = (x / CELL_W) * 0.12 + (y / CELL_H) * 0.06;
-        let p = ((timeSec - delay) % WAVE_PERIOD) / WAVE_PERIOD;
+        const delay = wavePhaseDelay(x, y, id, cssW, cssH);
+        let p = ((timeSec - delay) % wavePeriod) / wavePeriod;
         if (p < 0) p += 1;
-        // 0 -> min, 0.5 -> max, 1 -> min (ease-in-out-ish via cosine)
         const eased = 0.5 - 0.5 * Math.cos(p * 2 * Math.PI);
-        waveCtx.globalAlpha = OPACITY_MIN + (OPACITY_MAX - OPACITY_MIN) * eased;
+        let alpha = OPACITY_MIN + (OPACITY_MAX - OPACITY_MIN) * eased;
+
+        if (burstProgress < 1) {
+          alpha = Math.min(1, alpha + burstBoost(x, y, id, cssW, cssH, burstProgress));
+        }
+
+        waveCtx.globalAlpha = alpha;
         traceShape(waveCtx, x, y, flip);
         waveCtx.fill();
       }
@@ -140,7 +229,7 @@ export default function AnimatedBackground({ className = "", style }) {
 
     const loop = (now) => {
       if (!running) return;
-      drawWave(now / 1000);
+      drawWave(now);
       rafId = requestAnimationFrame(loop);
     };
 
@@ -165,7 +254,7 @@ export default function AnimatedBackground({ className = "", style }) {
 
     const resizeObserver = new ResizeObserver(() => {
       drawBase();
-      if (reduceMotion || !running) drawWave(performance.now() / 1000);
+      if (reduceMotion || !running) drawWave(performance.now());
     });
     resizeObserver.observe(container);
 
@@ -192,7 +281,6 @@ export default function AnimatedBackground({ className = "", style }) {
     };
     tileImg.src = pattern;
 
-    // In case the image is cached and already complete.
     if (tileImg.complete && tileImg.naturalWidth > 0) {
       tileImg.onload();
     }
@@ -223,7 +311,6 @@ export default function AnimatedBackground({ className = "", style }) {
           50%  { transform: translate(60px, -40px) scale(1.2); opacity: 0.8;  }
           100% { transform: translate(0, 0) scale(1);          opacity: 0.45; }
         }
-        /* Deepen the left (sidebar/heading) side; let the pattern read on the right */
         .bg-darken {
           position: absolute; inset: 0;
           background:
@@ -271,7 +358,6 @@ export default function AnimatedBackground({ className = "", style }) {
         }
       `}</style>
 
-      {/* Triangle tessellation + shimmer wave, drawn on canvas for performance */}
       <canvas
         ref={baseCanvasRef}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
@@ -281,14 +367,11 @@ export default function AnimatedBackground({ className = "", style }) {
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
       />
 
-      {/* Tone + Figma colour grade */}
       <div className="bg-darken" />
       <div className="bg-grade-overlay" />
       <div className="bg-grade-soft" />
 
-      {/* Animated teal-green gradient circle (Figma Ellipse 4) */}
       <div className="bg-blob-main" />
-      {/* <div className="bg-blob-accent" /> */}
     </div>
   );
 }
