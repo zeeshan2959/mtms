@@ -3,6 +3,8 @@ import { useState, useCallback } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import clickSoundFile from "/dragon-studio-futuristic-transition-499653.mp3";
 import imgServices from '/services.png';
+import AnimatedText from '../components/ui/AnimatedText';
+import Reveal from '../components/ui/Reveal';
 
 const clickAudio = new Audio(clickSoundFile);
 
@@ -140,10 +142,18 @@ export default function RAndDTeams() {
     >
       {/* ─── Services title block ─── */}
       <div style={{ paddingLeft: isWeb ? '46%' : isDesktop ? '32%' : isTablet ? '26%' : '36%', marginBottom: 40 }}>
-        <h1 className="text-[32px] md:text-[44px] lg:text-[66px] xl:text-[66px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }}>
-          R & D Teams
-        </h1>
-        <p
+        <AnimatedText
+          as="h1"
+          text="R & D Teams"
+          split="chars"
+          stagger={0.05}
+          className="text-[32px] md:text-[44px] lg:text-[66px] xl:text-[66px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]"
+          style={{ fontSize: isWeb && '65px' }}
+        />
+        <Reveal
+          as="p"
+          delay={0.2}
+          y={24}
           style={{
             fontSize: 15,
             fontFamily: 'Poppins, sans-serif',
@@ -154,11 +164,11 @@ export default function RAndDTeams() {
         >
           End-to-End engineering excellence — from concept design to validation and compliance. Our integrated approach ensures seamless development, precise release management, and uncompromised quality at every stage.
 
-        </p>
+        </Reveal>
       </div>
 
       {/* ─── Moving Menu ─── */}
-      <div className='pl-32 flex flex-col lg:flex-row items-center lg:flex-start justify-end gap-0'>
+      <Reveal className='pl-32 flex flex-col lg:flex-row items-center lg:flex-start justify-end gap-0' y={48} delay={0.3} duration={1}>
         {/* ── Left panel: staircase tab list (414 × 556 px — exact Figma) ── */}
         <div
         className='hidden sm:block'
@@ -309,7 +319,7 @@ export default function RAndDTeams() {
           </div>
 
         </div>
-      </div>
+      </Reveal>
     </div>
   );
 }

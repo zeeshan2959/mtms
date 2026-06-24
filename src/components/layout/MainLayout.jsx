@@ -43,7 +43,7 @@ export default function MainLayout({ children }) {
 
       <div className="z-30 relative flex flex-col min-h-screen">
         <Topbar />
-        <main className="relative z-30 h-[calc(100vh-110px)] overflow-y-auto p-[24px_36px_40px]">
+        <main id="app-scroll" className="relative z-30 h-[calc(100vh-110px)] overflow-y-auto p-[24px_36px_40px]">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>

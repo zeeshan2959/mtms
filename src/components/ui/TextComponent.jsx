@@ -1,6 +1,10 @@
+import Reveal from "./Reveal";
+
 const TextComponent = ({ text }) => {
   return (
-    <div
+    <Reveal
+      y={36}
+      duration={1}
       className="mb-4 flex gap-0 rounded-[15px] max-w-[300px] sm:max-w-[940px] 3xl:max-w-[967px] ml-auto md:mx-auto px-[15px] sm:px-[30px] 3xl:px-[35px] py-[20px] font-normal md:font-medium bg-[rgba(221,221,221,0.20)]"
       style={{ fontFamily: "Poppins, sans-serif" }}
     >
@@ -10,7 +14,7 @@ const TextComponent = ({ text }) => {
       >
         {text}
       </p>
-    </div>
+    </Reveal>
   );
 };
 
