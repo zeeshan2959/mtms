@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePageTransitionDirection } from "../../context/PageTransitionDirectionContext";
 import pattern from '/triangle.svg';
 
@@ -93,6 +93,7 @@ export default function AnimatedBackground({ className = "", style }) {
 
   const burstStartRef = useRef(null);
   const prevPatternIdRef = useRef(wavePattern.id);
+  const [blobPulse, setBlobPulse] = useState(false);
 
   const baseCanvasRef = useRef(null);
   const waveCanvasRef = useRef(null);
@@ -102,8 +103,13 @@ export default function AnimatedBackground({ className = "", style }) {
     if (wavePattern.id !== prevPatternIdRef.current) {
       prevPatternIdRef.current = wavePattern.id;
       burstStartRef.current = performance.now();
+      setBlobPulse(true);
+      const timer = setTimeout(() => setBlobPulse(false), 700);
+      return () => clearTimeout(timer);
     }
   }, [wavePattern.id]);
+
+  const blob = wavePattern.blob ?? { top: "42%", left: "-6%", size: "40vw" };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -326,8 +332,7 @@ export default function AnimatedBackground({ className = "", style }) {
           background: linear-gradient(55deg, rgb(25,27,52) 16%, rgb(115,115,115) 77%);
         }
         .bg-blob-main {
-          position: absolute; top: 42%; left: -6%;
-          width: 40vw; height: 40vw; max-width: 1000px; max-height: 1000px;
+          position: absolute;
           border-radius: 50%;
           background: radial-gradient(
             circle at 50% 50%,
@@ -341,6 +346,21 @@ export default function AnimatedBackground({ className = "", style }) {
           filter: blur(90px) saturate(1.15);
           mix-blend-mode: screen;
           animation: bgBlobMain 14s ease-in-out infinite;
+          transition:
+            top 1.35s cubic-bezier(0.4, 0, 0.2, 1),
+            left 1.35s cubic-bezier(0.4, 0, 0.2, 1),
+            width 1.35s cubic-bezier(0.4, 0, 0.2, 1),
+            height 1.35s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.55s ease;
+          max-width: 1000px;
+          max-height: 1000px;
+        }
+        @keyframes bgBlobNavShift {
+          0%   { opacity: 0.55; filter: blur(90px) saturate(1.4) brightness(1.25); }
+          100% { opacity: 0.85; filter: blur(90px) saturate(1.15) brightness(1); }
+        }
+        .bg-blob-main.is-nav-shift {
+          animation: bgBlobNavShift 0.75s ease-out, bgBlobMain 14s ease-in-out infinite;
         }
         .bg-blob-accent {
           position: absolute; top: 8%; right: 14%;
@@ -354,7 +374,7 @@ export default function AnimatedBackground({ className = "", style }) {
           animation: bgBlobAccent 18s ease-in-out infinite;
         }
         @media (prefers-reduced-motion: reduce) {
-          .bg-blob-main, .bg-blob-accent { animation: none; }
+          .bg-blob-main, .bg-blob-accent { animation: none; transition: none; }
         }
       `}</style>
 
@@ -371,7 +391,15 @@ export default function AnimatedBackground({ className = "", style }) {
       <div className="bg-grade-overlay" />
       <div className="bg-grade-soft" />
 
-      <div className="bg-blob-main" />
+      <div
+        className={`bg-blob-main${blobPulse ? " is-nav-shift" : ""}`}
+        style={{
+          top: blob.top,
+          left: blob.left,
+          width: blob.size,
+          height: blob.size,
+        }}
+      />
     </div>
   );
 }

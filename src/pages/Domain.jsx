@@ -3,6 +3,8 @@ import { useMediaQuery } from 'react-responsive';
 import DomainButton from '../components/ui/DomainButton';
 import Car from '/Car.png';
 import DomainCarousel from '../components/ui/DomainCarousel';
+import AnimatedText from '../components/ui/AnimatedText';
+import Reveal from '../components/ui/Reveal';
 
 function Domain() {
     const isWeb = useMediaQuery({ minWidth: 1920 });
@@ -37,14 +39,12 @@ function Domain() {
         <div className='w-full flex flex-col justify-center items-center lg:flex-row'>
             <div className='w-[70%] md:w-[60%] lg:w-1/2 pl-8 lg:pl-48 flex flex-col lg:gap-4 gap-2 items-center justify-end'>
                 <div className='mb-8 w-full ml-auto lg:hidden'>
-                    <h1 className="text-[32px] md:text-[44px] lg:text-[46px] xl:text-[56px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }}>
-                        Domains
-                    </h1>
+                    <AnimatedText as="h1" text="Domains" split="chars" stagger={0.05} className="text-[32px] md:text-[44px] lg:text-[46px] xl:text-[56px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }} />
                     {/* <p className='text-white text-[18px]' style={{ fontFamily: 'Poppins, sans-serif' }}>Lorem ipsum dolor sit amet consectetur. Tellus blandit pellentesque duis eu at. Id sociis augue.</p> */}
                 </div>
-                <div>
+                <Reveal scale={0.94} y={30} duration={1.1}>
                     <img src={activeDomain === 'Automotive' ? Car : activeDomain === 'Railway' ? Car : activeDomain === 'Marine' ? Car : activeDomain === 'Industrial Machinery' ? Car : activeDomain === 'Household Appliances' ? Car : Car} alt="car" />
-                </div>
+                </Reveal>
                 {activeDomain === 'Automotive' ? (
                     <p className='text-[14px] sm:text-[18px] lg:text-[20px] xl:text-[27px] font-bold text-center lg:text-start' style={{ fontFamily: 'Poppins, sans-serif' }}>
                         Delivering detailed CAD design, vehicle packaging studies, and compliance documentation to support OEM and Tier-1 automotive development programs. Our work includes component design, system integration, design validation support, and technical documentation across multiple stages of the vehicle development cycle.
@@ -77,17 +77,17 @@ function Domain() {
             </div>
             <div className='w-full lg:w-1/2'>
                 <div className='mb-8 w-full ml-auto hidden lg:block'>
-                    <h1 className="text-[32px] md:text-[44px] lg:text-[46px] xl:text-[56px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }}>
-                        Domains
-                    </h1>
+                    <AnimatedText as="h1" text="Domains" split="chars" stagger={0.05} className="text-[32px] md:text-[44px] lg:text-[46px] xl:text-[56px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }} />
                     {/* <p className='text-white text-[18px]' style={{ fontFamily: 'Poppins, sans-serif' }}>
                         Lorem ipsum dolor sit amet consectetur. Tellus blandit pellentesque duis eu at. Id sociis augue.
                     </p> */}
                 </div>
                 <div className='flex gap-10 w-full lg:min-w-[55%] justify-self-end justify-center lg:justify-end text-white'>
                     <div className='hidden lg:grid grid-cols-2'>
-                        {domains.map((domain) => (
-                            <DomainButton key={domain.title} title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} />
+                        {domains.map((domain, i) => (
+                            <Reveal key={domain.title} y={26} blur={0} duration={0.7} delay={0.08 * i}>
+                                <DomainButton title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} />
+                            </Reveal>
                         ))}
                     </div>
                     <DomainCarousel domains={domains} handleDomainClick={handleDomainClick} />
