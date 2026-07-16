@@ -9,15 +9,16 @@ import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 export default function WorldMapWithList() {
   const chartRef = useRef(null);
   const polygonSeriesRef = useRef(null);
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState("IT");
 
   // Right side countries (codes + labels)
   const countryList = [
     { code: "IT", name: "Italy" },
-    { code: "US", name: "USA" },
-    { code: "MX", name: "Mexico" },
+    { code: "DE", name: "Germany" },
+    { code: "US", name: "United States" },
+    { code: "MY", name: "Malaysia" },
     { code: "PK", name: "Pakistan" },
-    { code: "CA", name: "Canada" },
+    { code: "BR", name: "Brazil" },
   ];
 
   useLayoutEffect(() => {
@@ -56,21 +57,22 @@ export default function WorldMapWithList() {
     polygonSeries.mapPolygons.template.setAll({
       tooltipText: "{name}",
       interactive: true,
-      fill: am5.color(0xdddddd), // rgba(221,221,221)
-      fillOpacity: 0.35,
-      stroke: am5.color(0x16a7ef),
-      strokeOpacity: 0.2,
+      fill: am5.color(0xdddddd),
+      fillOpacity: 0.88,
+      stroke: am5.color(0x45e7ef),
+      strokeOpacity: 0.12,
       cursorOverStyle: "pointer",
     });
 
     // Hover state
     polygonSeries.mapPolygons.template.states.create("hover", {
-      fill: am5.color(0x16a7ef),
+      fill: am5.color(0x45e7ef),
     });
 
     // Active (selected)
     polygonSeries.mapPolygons.template.states.create("active", {
-      fill: am5.color(0x16a7ef),
+      fill: am5.color(0x45e7ef),
+      fillOpacity: 1,
     });
 
     // Click on map
@@ -84,6 +86,11 @@ export default function WorldMapWithList() {
       });
 
       ev.target.set("active", true);
+    });
+
+    polygonSeries.events.on("datavalidated", () => {
+      const dataItem = polygonSeries.getDataItemById("IT");
+      dataItem?.get("mapPolygon")?.set("active", true);
     });
 
     return () => {
@@ -110,22 +117,22 @@ export default function WorldMapWithList() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-[300px] lg:h-[450px] 3xl:h-[600px] text-white ml-auto pl-20 md:gap-4">
+    <div className="flex flex-col md:flex-row h-[300px] lg:h-[360px] 3xl:h-[430px] text-white ml-auto md:gap-6 max-w-[980px] mx-auto px-4">
       
       {/* Map */}
       <div ref={chartRef} className="w-full ml-auto h-full" />
 
       {/* Right Side List */}
-      <div className="w-full md:w-[220px] flex md:flex-col justify-center md:justify-end items-center md:items-start gap-4 space-y-2 lg:space-y-[20px]">
+      <div className="w-full md:w-[220px] flex md:flex-col justify-center md:justify-center items-center gap-3 mt-4 md:mt-0">
         {countryList.map((item) => (
           <button
             key={item.code}
             style={{ fontFamily: 'Poppins, sans-serif'}}
             onClick={() => handleSelectCountry(item.code)}
-            className={`font-poppins transition text-[16px] md:text-[20px] xl:text-[27px] 3xl:text-[35px] ${
+            className={`w-[150px] md:w-[190px] rounded-[8px] border border-white/20 px-4 py-1.5 font-poppins transition text-[13px] md:text-[15px] xl:text-[18px] shadow-[inset_0_0_18px_rgba(255,255,255,0.08)] ${
               selectedCountry === item.code
-                ? "text-blue-400 font-normal md:font-bold"
-                : "text-white/60 hover:text-white"
+                ? "bg-[rgba(221,221,221,0.35)] text-white font-semibold"
+                : "bg-[rgba(221,221,221,0.08)] text-white hover:bg-[rgba(221,221,221,0.22)]"
             }`}
           >
             {item.name}

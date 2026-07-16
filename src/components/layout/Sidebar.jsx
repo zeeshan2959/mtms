@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { NavLink, useLocation } from 'react-router-dom';
-import hoverSound from '/dragon-studio-futuristic-transition-499653.mp3';
+import hoverSound from '/clickedSound.wav';
 import imgHome from '/home.png';
 import imgCircleInfo from '/circle-info.png';
 import imgGlobe from '/globe.png';
