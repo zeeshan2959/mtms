@@ -424,19 +424,17 @@ export default function Sercices() {
                   width: '100%',
                   maxHeight: '100%',
                   overflowY: 'auto',
-                  border: '2px solid rgba(238,113,53,0.82)',
-                  boxShadow: '0 0 16px rgba(238,113,53,0.58)',
-                  background: 'rgba(24,24,24,0.38)',
+                  // background: 'rgba(24,24,24,0.38)',
                 }}
               >
                 <h2
                   style={{
                     margin: 0,
-                    padding: '12px 16px',
+                    padding: '8px 16px',
                     background: '#ee7135',
                     color: '#ffffff',
                     fontFamily: 'Poppins, sans-serif',
-                    fontSize: isMobile ? 20 : 30,
+                    fontSize: isMobile ? 16 : 18,
                     fontWeight: 500,
                     lineHeight: 1.15,
                     textAlign: 'center',
@@ -448,11 +446,11 @@ export default function Sercices() {
                 <ul
                   style={{
                     margin: 0,
-                    padding: isMobile ? '14px 14px 16px 24px' : '16px 18px 18px 28px',
+                    padding: isMobile ? '14px 14px 16px 24px' : '16px 8px 8px 2px',
                     color: '#ffffff',
                     fontFamily: 'Poppins, sans-serif',
                     fontSize: isMobile ? 11 : isTablet ? 12 : 14,
-                    fontWeight: 600,
+                    fontWeight: 400,
                     lineHeight: 1.45,
                   }}
                 >
