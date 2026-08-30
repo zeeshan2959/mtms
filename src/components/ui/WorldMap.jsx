@@ -1,17 +1,28 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState, useCallback } from "react";
 
 // amCharts
 import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
 import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
+import TimezoneCard, { TIMEZONE_COUNTRY_CODES } from "./TimezoneCard";
 
-export default function WorldMapWithList() {
+const SUPPORTED_CODES = new Set(Object.keys(TIMEZONE_COUNTRY_CODES));
+
+export default function WorldMapWithList({ showTimezoneTooltip = false }) {
   const chartRef = useRef(null);
   const polygonSeriesRef = useRef(null);
+  const hideTooltipTimerRef = useRef(null);
+  const tooltipHoveredRef = useRef(false);
+  const showTimezoneTooltipRef = useRef(showTimezoneTooltip);
   const [selectedCountry, setSelectedCountry] = useState("IT");
+  const [hoveredCountry, setHoveredCountry] = useState(null);
+  const [tooltipHovered, setTooltipHovered] = useState(false);
+  const [selectedZoneByCountry, setSelectedZoneByCountry] = useState({});
 
-  // Right side countries (codes + labels)
+  showTimezoneTooltipRef.current = showTimezoneTooltip;
+  tooltipHoveredRef.current = tooltipHovered;
+
   const countryList = [
     { code: "IT", name: "Italy" },
     { code: "DE", name: "Germany" },
@@ -21,15 +32,36 @@ export default function WorldMapWithList() {
     { code: "BR", name: "Brazil" },
   ];
 
+  const clearHideTooltipTimer = useCallback(() => {
+    if (hideTooltipTimerRef.current) {
+      window.clearTimeout(hideTooltipTimerRef.current);
+      hideTooltipTimerRef.current = null;
+    }
+  }, []);
+
+  const scheduleHideTooltip = useCallback(() => {
+    clearHideTooltipTimer();
+    hideTooltipTimerRef.current = window.setTimeout(() => {
+      setHoveredCountry(null);
+    }, 120);
+  }, [clearHideTooltipTimer]);
+
+  const showCountryTooltip = useCallback(
+    (code) => {
+      if (!showTimezoneTooltipRef.current || !SUPPORTED_CODES.has(code)) return;
+      clearHideTooltipTimer();
+      setHoveredCountry(code);
+    },
+    [clearHideTooltipTimer]
+  );
+
   useLayoutEffect(() => {
     let root = am5.Root.new(chartRef.current);
 
-    // ✅ Remove amCharts logo
     root._logo?.dispose();
 
     root.setThemes([am5themes_Animated.new(root)]);
 
-    // ✅ Disable zoom & interactions
     let chart = root.container.children.push(
       am5map.MapChart.new(root, {
         panX: "none",
@@ -43,7 +75,6 @@ export default function WorldMapWithList() {
 
     chart.chartContainer.set("interactive", false);
 
-    // Map series
     let polygonSeries = chart.series.push(
       am5map.MapPolygonSeries.new(root, {
         geoJSON: am5geodata_worldLow,
@@ -53,9 +84,7 @@ export default function WorldMapWithList() {
 
     polygonSeriesRef.current = polygonSeries;
 
-    // Default map style
     polygonSeries.mapPolygons.template.setAll({
-      tooltipText: "{name}",
       interactive: true,
       fill: am5.color(0xdddddd),
       fillOpacity: 0.88,
@@ -64,18 +93,26 @@ export default function WorldMapWithList() {
       cursorOverStyle: "pointer",
     });
 
-    // Hover state
     polygonSeries.mapPolygons.template.states.create("hover", {
       fill: am5.color(0x45e7ef),
     });
 
-    // Active (selected)
     polygonSeries.mapPolygons.template.states.create("active", {
       fill: am5.color(0x45e7ef),
       fillOpacity: 1,
     });
 
-    // Click on map
+    polygonSeries.mapPolygons.template.events.on("pointerover", (ev) => {
+      const id = ev.target.dataItem.get("id");
+      showCountryTooltip(id);
+    });
+
+    polygonSeries.mapPolygons.template.events.on("pointerout", () => {
+      if (!tooltipHoveredRef.current) {
+        scheduleHideTooltip();
+      }
+    });
+
     polygonSeries.mapPolygons.template.events.on("click", (ev) => {
       const id = ev.target.dataItem.get("id");
 
@@ -94,11 +131,11 @@ export default function WorldMapWithList() {
     });
 
     return () => {
+      clearHideTooltipTimer();
       root.dispose();
     };
-  }, []);
+  }, [showCountryTooltip, scheduleHideTooltip, clearHideTooltipTimer]);
 
-  // Click from right-side list
   const handleSelectCountry = (code) => {
     const polygonSeries = polygonSeriesRef.current;
 
@@ -116,19 +153,62 @@ export default function WorldMapWithList() {
     }
   };
 
+  const hoveredCountryName = hoveredCountry ? TIMEZONE_COUNTRY_CODES[hoveredCountry] : null;
+  const showTooltip = showTimezoneTooltip && hoveredCountryName;
+
+  const selectZone = (zoneName) => {
+    if (!hoveredCountryName) return;
+    setSelectedZoneByCountry((current) => ({
+      ...current,
+      [hoveredCountryName]: zoneName,
+    }));
+  };
+
   return (
     <div className="flex flex-col md:flex-row h-[300px] lg:h-[360px] 3xl:h-[430px] text-white ml-auto md:gap-6 max-w-[980px] mx-auto px-4">
-      
-      {/* Map */}
-      <div ref={chartRef} className="w-full ml-auto h-full" />
+      <div
+        className="relative w-full ml-auto h-full"
+        onMouseLeave={() => {
+          setTooltipHovered(false);
+          scheduleHideTooltip();
+        }}
+      >
+        <div ref={chartRef} className="h-full w-full" />
 
-      {/* Right Side List */}
+        {showTooltip && (
+          <div
+            className="pointer-events-auto absolute left-3 top-3 z-20 max-w-[calc(100%-24px)]"
+            onMouseEnter={() => {
+              clearHideTooltipTimer();
+              setTooltipHovered(true);
+            }}
+            onMouseLeave={() => {
+              setTooltipHovered(false);
+              scheduleHideTooltip();
+            }}
+          >
+            <TimezoneCard
+              countryName={hoveredCountryName}
+              selectedZoneName={selectedZoneByCountry[hoveredCountryName]}
+              onZoneChange={selectZone}
+              compact
+            />
+          </div>
+        )}
+      </div>
+
       <div className="w-full md:w-[220px] flex md:flex-col justify-center md:justify-center items-center gap-3 mt-4 md:mt-0">
         {countryList.map((item) => (
           <button
             key={item.code}
-            style={{ fontFamily: 'Poppins, sans-serif'}}
+            style={{ fontFamily: "Poppins, sans-serif" }}
             onClick={() => handleSelectCountry(item.code)}
+            onMouseEnter={() => showCountryTooltip(item.code)}
+            onMouseLeave={() => {
+              if (!tooltipHovered) {
+                scheduleHideTooltip();
+              }
+            }}
             className={`w-[150px] md:w-[190px] rounded-[8px] border border-white/20 px-4 py-1.5 font-poppins transition text-[13px] md:text-[15px] xl:text-[18px] shadow-[inset_0_0_18px_rgba(255,255,255,0.08)] ${
               selectedCountry === item.code
                 ? "bg-[rgba(221,221,221,0.35)] text-white font-semibold"

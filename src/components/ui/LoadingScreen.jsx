@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import imgLogo from "/Logo.svg";
 
 const LOGO_STAGES = [
-  { pct: 0,   src: "/first_frame.svg",  label: "Initializing…" },
-  { pct: 20,  src: "/secound_frame.svg", label: "Loading assets…" },
-  { pct: 40,  src: "/third_frame.svg", label: "Building systems…" },
-  { pct: 60,  src: "/forth_frame.svg", label: "Calibrating…" },
-  { pct: 80,  src: "/fifth_frame.svg", label: "Almost ready…" },
-  { pct: 100, src: "/fifth_frame.svg", label: "Ready" },
+  { pct: 0,   label: "Initializing…" },
+  { pct: 20,  label: "Loading assets…" },
+  { pct: 40,  label: "Building systems…" },
+  { pct: 60,  label: "Calibrating…" },
+  { pct: 80,  label: "Almost ready…" },
+  { pct: 100, label: "Ready" },
 ];
 
 function getLogoForProgress(pct) {
@@ -279,20 +280,19 @@ export default function LoadingScreen({ isReady, onComplete }) {
         <RingTicks size={220} />
         <ProgressRing progress={progress} size={220} stroke={3} />
 
-        {/* Logo */}
+        {/* MTMS logo */}
         <div style={{
           position: "absolute", top: "50%", left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 130, height: 100,
+          width: 120,
           display: "flex", alignItems: "center", justifyContent: "center",
           transition: "opacity 0.25s ease", opacity: logoOpacity,
         }}>
           <img
-            key={currentStage.src}
-            src={currentStage.src}
-            alt="TST Logo"
+            src={imgLogo}
+            alt="MTMS Engineering"
             style={{
-              width: "100%", height: "100%", objectFit: "contain",
+              width: "100%", height: "auto", objectFit: "contain",
               filter: done ? "none" : "brightness(0.95)",
             }}
           />
