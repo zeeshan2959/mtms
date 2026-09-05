@@ -5,7 +5,7 @@ const TextComponent = ({ text }) => {
     <Reveal
       y={36}
       duration={1}
-      className="mb-4 flex gap-0 rounded-[15px] max-w-[300px] sm:max-w-[940px] 3xl:max-w-[967px] ml-auto md:mx-auto px-[15px] sm:px-[30px] 3xl:px-[35px] py-[20px] font-normal md:font-medium bg-[rgba(221,221,221,0.20)]"
+      className="mb-4 flex w-full max-w-[940px] gap-0 rounded-[15px] 3xl:max-w-[967px] ml-auto md:mx-auto px-3 sm:px-[30px] 3xl:px-[35px] py-4 sm:py-[20px] font-normal md:font-medium bg-[rgba(221,221,221,0.20)]"
       style={{ fontFamily: "Poppins, sans-serif" }}
     >
       <p

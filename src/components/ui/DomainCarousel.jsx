@@ -14,7 +14,7 @@ export default function DomainCarousel({ domains, handleDomainClick }) {
   };
 
   return (
-    <div className="relative lg:hidden max-w-[240px] sm:max-w-[480px] md:max-w-[650px] ml-20 lg:ml-0 mt-4">
+    <div className="relative mx-auto lg:mx-0 lg:hidden max-w-[240px] sm:max-w-[480px] md:max-w-[650px] ml-0 sm:ml-20 lg:ml-0 mt-4">
       
       <button
         onClick={() => scroll("left")}

@@ -6,7 +6,7 @@ export default function Dashboard() {
   const isWeb = useMediaQuery({ minWidth: 1920 });
 
   return (
-    <div className="ml-[70px] md:ml-[201px] lg:ml-[401px] xl:ml-[601px] 3xl:ml-[602px] mt-10">
+    <div className="ml-0 md:ml-[201px] lg:ml-[401px] xl:ml-[601px] 3xl:ml-[602px] mt-10">
 
       <AnimatedText
         as="h1"

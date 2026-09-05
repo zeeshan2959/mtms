@@ -2,7 +2,6 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import clickSoundFile from "/clickedSound.wav";
-import imgServices from '/services.png';
 import AnimatedText from '../components/ui/AnimatedText';
 import Reveal from '../components/ui/Reveal';
 
@@ -168,7 +167,7 @@ export default function RAndDTeams() {
   return (
     <div
       style={{
-        margin: '-24px -36px -40px',
+        margin: isMobile ? 0 : '-24px -36px -40px',
         minHeight: 'calc(100vh - 76px)',
         display: 'flex',
         flexDirection: 'column',
@@ -177,7 +176,7 @@ export default function RAndDTeams() {
       className='px-2 sm:px-4 md:p-[40px 48px 48px 0]'
     >
       {/* ─── Services title block ─── */}
-      <div style={{ paddingLeft: isWeb ? '46%' : isDesktop ? '32%' : isTablet ? '26%' : '36%', marginBottom: 40 }}>
+      <div style={{ paddingLeft: isMobile ? 0 : isWeb ? '46%' : isDesktop ? '32%' : isTablet ? '26%' : '36%', marginBottom: isMobile ? 24 : 40 }}>
         <AnimatedText
           as="h1"
           text="R & D Teams"
@@ -204,14 +203,14 @@ export default function RAndDTeams() {
       </div>
 
       {/* ─── Moving Menu ─── */}
-      <Reveal className='pl-32 flex flex-col lg:flex-row items-center lg:flex-start justify-end gap-0' y={48} delay={0.3} duration={1}>
+      <Reveal className='px-0 sm:pl-32 flex flex-col lg:flex-row items-center lg:flex-start justify-end gap-0' y={48} delay={0.3} duration={1}>
         {/* ── Left panel: staircase tab list (414 × 556 px — exact Figma) ── */}
         <div
-        className='hidden sm:block'
+        className='order-2 block lg:order-1'
           style={{
             position: 'relative',
             width: isMobile ? '100%' : isTablet ? 414 : isDesktop ? 414 : isWeb ? 514 : 514,
-            height: isMobile ? 411 : isTablet ? 411 : isDesktop ? 411 : 511,
+            height: isMobile ? 'auto' : isTablet ? 411 : isDesktop ? 411 : 511,
             flexShrink: 0,
             overflow: 'hidden',
           }}
@@ -232,24 +231,25 @@ export default function RAndDTeams() {
                 key={i}
                 onClick={() => setActiveIndex(i)}
                 style={{
-                  position: 'absolute',
-                  left,
-                  top,
+                  position: isMobile ? 'relative' : 'absolute',
+                  left: isMobile ? 0 : left,
+                  top: isMobile ? 'auto' : top,
                   width: isMobile ? '100%' : isTablet ? 288 : isDesktop ? 288 : isWeb ? 388 : 388,
                   background: isActive ? 'rgba(221,221,221,0.18)' : 'rgba(0,0,0,0)',
                   border: `${isActive ? '1px solid rgba(255,255,255,0.25)' : '1px solid white'}`,
                   borderRadius: 10,
-                  padding: '10px 30px',
+                  padding: isMobile ? '8px 16px' : '10px 30px',
                   color: '#ffffff',
                   fontFamily: 'Poppins, sans-serif',
                   fontWeight: 700,
-                  fontSize: isMobile ? 12 : isTablet ? 14 : isDesktop ? 16 : 22,       
+                  fontSize: isMobile ? 11 : isTablet ? 14 : isDesktop ? 16 : 22,       
                   textAlign: 'center',
                   lineHeight: 1.25,
                   whiteSpace: 'pre-line',  // honour \n line breaks in name
-                  opacity,
-                  cursor: Math.abs(delta) <= 2 ? 'pointer' : 'default',
-                  pointerEvents: Math.abs(delta) <= 2 ? 'auto' : 'none',
+                  opacity: isMobile ? 1 : opacity,
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  marginBottom: isMobile ? 8 : 0,
                   transition: [
                     'left 0.42s cubic-bezier(0.4,0,0.2,1)',
                     'top 0.42s cubic-bezier(0.4,0,0.2,1)',
@@ -270,35 +270,35 @@ export default function RAndDTeams() {
         <div
           style={{
             width: isMobile ? '100%' : isTablet ? 444 : isDesktop ? 544 : isWeb ? 544 : 544,
-            minHeight: isMobile ? 211 : isTablet ? 311 : isDesktop ? 411 : 511,
+            minHeight: isMobile ? 360 : isTablet ? 311 : isDesktop ? 411 : 511,
             flexShrink: 0,
             background: 'rgba(221,221,221,0.20)',
             borderRadius: 15,
             border: '1px solid rgba(221,221,221,0.20)',
-            padding: '26px 26px 22px',
+            padding: isMobile ? '18px 18px 18px' : '26px 26px 22px',
             display: 'flex',
             flexDirection: 'column',
             // boxShadow: '0 8px 40px rgba(0,0,0,0.35)',
             position: 'relative',
           }}
-          className='ml-0 md:ml-[30px]'
+          className='order-1 ml-0 md:ml-[30px] lg:order-2'
         >
           {/* Title */}
           <p
             style={{
               fontFamily: 'Poppins, sans-serif',
               fontWeight: 600,
-              fontSize: 18,
+              fontSize: isMobile ? 14 : 18,
               color: '#ffffff',
               lineHeight: 1.45,
-              marginBottom: 22,
+              marginBottom: isMobile ? 14 : 22,
             }}
           >
             {active.subtitle}
           </p>
 
           {/* Divider */}
-          <div style={{ width: '100%', height: 1, background: 'rgba(255,255,255,0.10)', marginBottom: 18 }} />
+          <div style={{ width: '100%', height: 1, background: 'rgba(255,255,255,0.10)', marginBottom: isMobile ? 12 : 18 }} />
 
           {/* Description */}
           <div
@@ -313,7 +313,7 @@ export default function RAndDTeams() {
               style={{
                 margin: 0,
                 fontFamily: 'Poppins, sans-serif',
-                fontSize: isMobile ? 13 : 15,
+                fontSize: isMobile ? 11 : 15,
                 color: 'rgba(255,255,255,0.88)',
                 lineHeight: 1.45,
               }}
@@ -325,13 +325,13 @@ export default function RAndDTeams() {
               style={{
                 display: 'grid',
                 gridTemplateColumns: `repeat(${frontItems.length}, minmax(0, 1fr))`,
-                gap: isMobile ? 14 : 20,
+                gap: isMobile ? 8 : 20,
                 alignItems: 'start',
-                marginTop: isMobile ? 24 : 34,
+                marginTop: isMobile ? 16 : 34,
                 paddingBottom: 18,
               }}
             >
-              {frontItems.map((label, index) => (
+              {frontItems.map((label) => (
                 <div
                   key={label}
                   style={{
@@ -342,12 +342,12 @@ export default function RAndDTeams() {
                     color: '#ffffff',
                   }}
                 >
-                  <RAndDIcon label={label} size={isMobile ? 60 : 66} />
+                  <RAndDIcon label={label} size={isMobile ? 46 : 66} />
                   <span
                     style={{
                       marginTop: 6,
                       fontFamily: 'Poppins, sans-serif',
-                      fontSize: isMobile ? 9 : 10,
+                      fontSize: isMobile ? 8 : 10,
                       lineHeight: 1.2,
                       maxWidth: 118,
                     }}

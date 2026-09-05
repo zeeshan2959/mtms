@@ -48,7 +48,7 @@ function Domain() {
 
     return (
         <div className='w-full flex flex-col justify-center items-center lg:flex-row'>
-            <div className='w-[70%] md:w-[60%] lg:w-1/2 pl-8 lg:pl-48 flex flex-col lg:gap-4 gap-2 items-center justify-end'>
+            <div className='w-full md:w-[60%] lg:w-1/2 pl-0 lg:pl-48 flex flex-col lg:gap-4 gap-2 items-center justify-end'>
                 <div className='mb-8 w-full ml-auto lg:hidden'>
                     <AnimatedText as="h1" text="Domains" split="chars" stagger={0.05} className="text-[32px] md:text-[44px] lg:text-[46px] xl:text-[56px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }} />
                     {/* <p className='text-white text-[18px]' style={{ fontFamily: 'Poppins, sans-serif' }}>Lorem ipsum dolor sit amet consectetur. Tellus blandit pellentesque duis eu at. Id sociis augue.</p> */}

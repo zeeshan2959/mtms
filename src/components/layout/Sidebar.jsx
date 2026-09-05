@@ -74,13 +74,13 @@ export default function Sidebar() {
         left: isTablet || isMobile ? '0px' : '60px',
         top: isWeb || isDesktop ? '133px' : '100px',
         height: '70%',
-        width: 88,
+        width: isMobile ? 56 : 88,
         zIndex: 50,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: isWeb || isDesktop ? 52 : isTablet ? 32 : 36,
+        gap: isWeb || isDesktop ? 52 : isTablet ? 32 : isMobile ? 28 : 36,
         padding: '7px 0',
       }}
     >
@@ -94,7 +94,7 @@ export default function Sidebar() {
         const isHovered = hoveredPath === path;
 
         // ✅ Keep layout stable
-        const isVisible = isExpanded || index === 0;
+        const isVisible = isMobile || isExpanded || index === 0;
 
         return (
           <NavLink
@@ -151,11 +151,15 @@ export default function Sidebar() {
             <span
               style={{
                 position: 'absolute',
-                left: 'calc(100% + 14px)',
-                top: '50%',
+                left: isMobile ? '50%' : 'calc(100% + 14px)',
+                top: isMobile ? 'calc(100% + 8px)' : '50%',
                 transform: isHovered
-                  ? 'translateY(-50%) translateX(0)'
-                  : 'translateY(-50%) translateX(-8px)',
+                  ? isMobile
+                    ? 'translateX(-50%) translateY(0)'
+                    : 'translateY(-50%) translateX(0)'
+                  : isMobile
+                    ? 'translateX(-50%) translateY(-8px)'
+                    : 'translateY(-50%) translateX(-8px)',
                 background: isMobile ? 'rgba(6, 13, 26, 0.92)' : 'transparent',
                 color: '#ffffff',
                 padding: '5px 14px',
