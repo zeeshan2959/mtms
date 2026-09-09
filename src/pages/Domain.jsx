@@ -12,31 +12,31 @@ function Domain() {
         {
             title: 'Automotive',
             buttonText: 'Learn more',
-            image: '/domain/automotive.png',
+            image: '/domain/car.png',
             description: 'Our expertise spans the complete vehicle development journey from concept to serial production encompassing style feasibility, vehicle architecture, and detailed packaging studies, with a strong emphasis on seamless chassis to top hat integration to deliver robust validation support and production-ready solutions.',
         },
         {
             title: 'Railway',
             buttonText: 'Learn more',
-            image: '/domain/railway.png',
+            image: '/domain/train.png',
             description: 'We specialize in providing detailed design and engineering support that includes detailed structural layouts, internal subsystem design, integration checks, and safety compliance documentation. Our capabilities cover component design, system validation, technical documentation, and operational support across the complete development lifecycle.',
         },
         {
             title: 'Marine',
             buttonText: 'Learn more',
-            image: '/domain/marine.png',
+            image: '/domain/boat.png',
             description: 'We deliver advanced digital mock-ups, durability assessments, and regulatory compliance documentation for marine systems, supporting safe and efficient development. Our expertise includes component and system design, performance validation, and comprehensive technical documentation across all phases of the development lifecycle.',
         },
         {
             title: 'Industrial Machinery',
             buttonText: 'Learn more',
-            image: '/domain/industrial-machinery.png',
+            image: '/domain/turbine.png',
             description: 'Creating detailed CAD designs, assembly documentation, and comprehensive performance and validation reports to support complex industrial machinery programs. Our expertise spans component and system design, validation activities, and process optimization, providing production-ready design packages supported by thorough technical documentation throughout the development cycle.',
         },
         {
             title: 'Household Appliances',
             buttonText: 'Learn more',
-            image: '/domain/household-appliances.png',
+            image: '/domain/fridge.png',
             description: 'Our expertise spans in comprehensive product design solutions for consumer appliances, including detailed design development, ergonomic and packaging studies, and compliance documentation. Our capabilities span component and system design, performance testing, and complete technical documentation to ensure functionality, safety, and manufacturability throughout the development lifecycle.',
         },
     ]

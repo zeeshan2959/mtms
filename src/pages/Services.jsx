@@ -161,6 +161,7 @@ export default function Sercices() {
     maxWidth: 1919,
   });
   const isWeb = useMediaQuery({ minWidth: 1920 });
+  const isWide = useMediaQuery({ minWidth: 1701 });
 
   useEffect(() => {
     setIsFlipped(false);
@@ -189,6 +190,7 @@ export default function Sercices() {
     <div
       style={{
         margin: isMobile ? 0 : '-24px -36px -40px',
+        paddingRight: isWide ? 100 : '48px',
         minHeight: 'calc(100vh - 76px)',
         display: 'flex',
         flexDirection: 'column',
@@ -431,8 +433,9 @@ export default function Sercices() {
                   style={{
                     margin: 0,
                     padding: '8px 16px',
-                    background: '#ee7135',
-                    color: '#ffffff',
+                    background: 'transparent',
+                    borderBottom: '1px solid rgba(69,231,239,0.45)',
+                    color: '#45E7EF',
                     fontFamily: 'Poppins, sans-serif',
                     fontSize: isMobile ? 16 : 18,
                     fontWeight: 500,

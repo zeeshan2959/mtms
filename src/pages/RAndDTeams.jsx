@@ -148,6 +148,7 @@ export default function RAndDTeams() {
     maxWidth: 1919,
   });
   const isWeb = useMediaQuery({ minWidth: 1920 });
+  const isWide = useMediaQuery({ minWidth: 1701 });
 
   const goNext = useCallback(() => {
     playClickSound();
@@ -168,10 +169,12 @@ export default function RAndDTeams() {
     <div
       style={{
         margin: isMobile ? 0 : '-24px -36px -40px',
+        paddingRight: isWide ? 100 : '48px',
         minHeight: 'calc(100vh - 76px)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        // background:'red'
       }}
       className='px-2 sm:px-4 md:p-[40px 48px 48px 0]'
     >
