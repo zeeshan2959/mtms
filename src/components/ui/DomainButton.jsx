@@ -19,7 +19,7 @@ export default function DomainButton({ title, buttonText = "Learn more", handleD
       </style>
 
       <div
-        className={`2xl:w-[349px] 2xl:h-[274px] xl:w-[280px] xl:h-[250px] w-[240px] h-[250px] rounded-[30px] overflow-hidden relative group cursor-pointer border border-[rgba(255,255,255,0.20)] ${className}`}
+        className={`2xl:w-[349px] 2xl:h-[274px] xl:w-[280px] xl:h-[250px] w-[240px] h-[140px] rounded-[30px] overflow-hidden relative group cursor-pointer border border-[rgba(255,255,255,0.20)] ${className}`}
         onClick={handleDomainClick}
         role="button"
         tabIndex={0}
