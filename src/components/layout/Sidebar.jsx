@@ -213,7 +213,7 @@ function MobileSidebar() {
       </button>
 
       {isOpen && (
-        <nav className="fixed left-0 top-[70px] z-0 w-screen rounded-b-2xl border border-white/20 bg-[#07111f]/95 p-3 shadow-2xl backdrop-blur-xl">
+        <nav className="fixed left-0 top-[70px] z-0 w-screen rounded-b-2xl border border-white/20 bg-transparent p-3 shadow-2xl backdrop-blur-xl">
           <div className="flex flex-col gap-1">
             {NAV_ITEMS.map(({ path, img, label }) => {
               const isActive = path === '/'
