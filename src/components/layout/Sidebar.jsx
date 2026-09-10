@@ -61,7 +61,7 @@ export default function Sidebar() {
   const isWeb = useMediaQuery({ minWidth: 1920 });
 
   if (isMobile) {
-    return <MobileSidebar />;
+    return <MobileSidebar playClickSound={playSound} />;
   }
 
   return (
@@ -192,7 +192,7 @@ export default function Sidebar() {
   );
 }
 
-function MobileSidebar() {
+function MobileSidebar({ playClickSound }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
@@ -234,6 +234,7 @@ function MobileSidebar() {
           </div>
           <NavLink
             to="/contact"
+            onClick={playClickSound}
             className="mt-3 flex items-center justify-center rounded-full border border-white px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-white/10"
           >
             Book a meeting

@@ -306,7 +306,10 @@ export default function Sercices() {
                 type="button"
                 aria-label="Previous tabs"
                 disabled={tabStart === 0}
-                onClick={() => setTabStart((start) => Math.max(start - 2, 0))}
+                onClick={() => {
+                  playClickSound();
+                  setTabStart((start) => Math.max(start - 2, 0));
+                }}
                 className="absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/35 text-white disabled:opacity-30"
               >
                 <ArrowLeft size={16} />
@@ -315,7 +318,10 @@ export default function Sercices() {
                 type="button"
                 aria-label="Next tabs"
                 disabled={tabStart + 2 >= SERVICES.length}
-                onClick={() => setTabStart((start) => Math.min(start + 2, SERVICES.length - 2))}
+                onClick={() => {
+                  playClickSound();
+                  setTabStart((start) => Math.min(start + 2, SERVICES.length - 2));
+                }}
                 className="absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/35 text-white disabled:opacity-30"
               >
                 <ArrowRight size={16} />
@@ -405,9 +411,10 @@ export default function Sercices() {
                 style={{
                   display: 'grid',
                   gridTemplateColumns: `repeat(${frontItems.length}, minmax(0, 1fr))`,
-                  gap: isMobile ? 8 : 20,
+                  gap: isMobile ? 5 : 20,
                   alignItems: 'start',
-                  marginTop: isMobile ? 16 : 26,
+                  marginTop: isMobile ? 12 : 26,
+                  paddingBottom: isMobile ? 32 : 0,
                 }}
               >
                 {frontItems.map((label, index) => (
@@ -428,9 +435,9 @@ export default function Sercices() {
                       style={{
                         marginTop: 6,
                         fontFamily: 'Poppins, sans-serif',
-                        fontSize: isMobile ? 8 : 10,
+                        fontSize: isMobile ? 7 : 10,
                         lineHeight: 1.2,
-                        maxWidth: 118,
+                        maxWidth: isMobile ? 74 : 118,
                       }}
                     >
                       {label}
@@ -512,9 +519,9 @@ export default function Sercices() {
               gap: 10,
               marginTop: 22,
               position: 'absolute',
-              left: isMobile ? 24 : 34,
-              right: isMobile ? 24 : 34,
-              bottom: isMobile ? 26 : 28,
+              left: isMobile ? 12 : 34,
+              right: isMobile ? 12 : 34,
+              bottom: isMobile ? 10 : 28,
               zIndex: 2,
             }}
           >
@@ -533,12 +540,12 @@ export default function Sercices() {
             </span>
 
             {/* Previous ← */}
-            <RoundBtn onClick={goPrev} disabled={!canPrev} label="Previous">
+            <RoundBtn onClick={goPrev} disabled={!canPrev} label="Previous" compact={isMobile}>
               <ArrowLeft size={20} />
             </RoundBtn>
 
             {/* Next → */}
-            <RoundBtn onClick={goNext} disabled={!canNext} label="Next">
+            <RoundBtn onClick={goNext} disabled={!canNext} label="Next" compact={isMobile}>
               <ArrowRight size={20} />
             </RoundBtn>
           </div>
@@ -738,7 +745,7 @@ function ServiceFrontIcon({ type, size = 77 }) {
 }
 
 /* ── Round navigation button — matches Figma circle buttons ── */
-function RoundBtn({ onClick, disabled, label, children }) {
+function RoundBtn({ onClick, disabled, label, children, compact = false }) {
   const [hov, setHov] = useState(false);
   return (
     <button
@@ -748,7 +755,7 @@ function RoundBtn({ onClick, disabled, label, children }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        padding: '10px 20px',
+        padding: compact ? '7px 14px' : '10px 20px',
         borderRadius: '118px',
         border: `2px solid ${disabled ? 'rgba(148,148,148,0.45)' : hov ? '#fff' : 'rgba(255,255,255,0.75)'}`,
         background: hov && !disabled ? 'rgba(255,255,255,0.08)' : 'transparent',

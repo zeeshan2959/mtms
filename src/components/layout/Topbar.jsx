@@ -1,6 +1,14 @@
 import { useMediaQuery } from "react-responsive";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import imgLogo from '/Logo.svg';
+import clickSoundFile from '/clickedSound.wav';
+
+const clickAudio = new Audio(clickSoundFile);
+
+function playClickSound() {
+  clickAudio.currentTime = 0;
+  clickAudio.play().catch(() => {});
+}
 
 export default function Topbar() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -45,7 +53,8 @@ export default function Topbar() {
       </Link>
 
       {/* "Book a meeting" pill button — matches Figma node 286:20246 */}
-      <button
+      <NavLink
+        to="/contact"
         style={{
           padding: isWeb ? '10px 32px' : isDesktop ? '10px 32px' : isTablet ? '10px 22px' : '8px 12px',
           border: isWeb ? '2px solid #ffffff' : isDesktop ? '2px solid #ffffff' : isTablet ? '1px solid #ffffff' : '1px solid #ffffff',
@@ -60,13 +69,16 @@ export default function Topbar() {
           whiteSpace: 'nowrap',
           transition: 'background 0.2s ease',
           width: isWeb ? '388px' : isDesktop ? '388px' : isTablet ? '288px' : '188px',
-          display: isMobile ? 'none' : 'block',
+          display: isMobile ? 'none' : 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+        onClick={playClickSound}
       >
         Book a meeting
-      </button>
+      </NavLink>
     </header>
   );
 }

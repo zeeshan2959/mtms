@@ -286,7 +286,10 @@ export default function RAndDTeams() {
                 type="button"
                 aria-label="Previous tabs"
                 disabled={tabStart === 0}
-                onClick={() => setTabStart((start) => Math.max(start - 2, 0))}
+                onClick={() => {
+                  playClickSound();
+                  setTabStart((start) => Math.max(start - 2, 0));
+                }}
                 className="absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/35 text-white disabled:opacity-30"
               >
                 <ArrowLeft size={16} />
@@ -295,7 +298,10 @@ export default function RAndDTeams() {
                 type="button"
                 aria-label="Next tabs"
                 disabled={tabStart + 2 >= SERVICES.length}
-                onClick={() => setTabStart((start) => Math.min(start + 2, SERVICES.length - 2))}
+                onClick={() => {
+                  playClickSound();
+                  setTabStart((start) => Math.min(start + 2, SERVICES.length - 2));
+                }}
                 className="absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/35 text-white disabled:opacity-30"
               >
                 <ArrowRight size={16} />
