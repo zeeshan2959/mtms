@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { NavLink, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import hoverSound from '/clickedSound.wav';
 import imgHome from '/home.png';
 import imgCircleInfo from '/circle-info.png';
@@ -58,6 +59,10 @@ export default function Sidebar() {
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1200 });
   const isDesktop = useMediaQuery({ minWidth: 1201, maxWidth: 1919 });
   const isWeb = useMediaQuery({ minWidth: 1920 });
+
+  if (isMobile) {
+    return <MobileSidebar />;
+  }
 
   return (
     <aside
@@ -184,5 +189,57 @@ export default function Sidebar() {
         );
       })}
     </aside>
+  );
+}
+
+function MobileSidebar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  return (
+    <div className="fixed top-[22px] right-[18px] z-[60] lg:hidden">
+      <button
+        type="button"
+        aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((open) => !open)}
+        className="relative z-10 flex h-10 w-14 items-center justify-center rounded-md border border-white/30 bg-black/30 text-white backdrop-blur-md"
+      >
+        {isOpen ? <X size={21} /> : <Menu size={21} />}
+      </button>
+
+      {isOpen && (
+        <nav className="fixed left-0 top-[70px] z-0 w-screen rounded-b-2xl border border-white/20 bg-[#07111f]/95 p-3 shadow-2xl backdrop-blur-xl">
+          <div className="flex flex-col gap-1">
+            {NAV_ITEMS.map(({ path, img, label }) => {
+              const isActive = path === '/'
+                ? location.pathname === '/'
+                : location.pathname === path || location.pathname.startsWith(path + '/');
+
+              return (
+                <NavLink
+                  key={path}
+                  to={path}
+                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${isActive ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+                >
+                  <img src={img} alt="" className="h-5 w-5 object-contain" />
+                  <span>{label}</span>
+                </NavLink>
+              );
+            })}
+          </div>
+          <NavLink
+            to="/contact"
+            className="mt-3 flex items-center justify-center rounded-full border border-white px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-white/10"
+          >
+            Book a meeting
+          </NavLink>
+        </nav>
+      )}
+    </div>
   );
 }

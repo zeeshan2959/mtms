@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function DomainButton({title, buttonText="Learn more", handleDomainClick}) {
+export default function DomainButton({ title, buttonText = "Learn more", handleDomainClick, className = "" }) {
   return (
     <>
       <style>
@@ -18,7 +18,15 @@ export default function DomainButton({title, buttonText="Learn more", handleDoma
         `}
       </style>
 
-      <div className="2xl:w-[349px] 2xl:h-[274px] xl:w-[280px] xl:h-[250px] w-[240px] h-[250px] rounded-[30px] overflow-hidden relative group cursor-pointer border border-[rgba(255,255,255,0.20)]">
+      <div
+        className={`2xl:w-[349px] 2xl:h-[274px] xl:w-[280px] xl:h-[250px] w-[240px] h-[250px] rounded-[30px] overflow-hidden relative group cursor-pointer border border-[rgba(255,255,255,0.20)] ${className}`}
+        onClick={handleDomainClick}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') handleDomainClick();
+        }}
+      >
         
         {/* Background */}
         <div className="absolute inset-0 bg-[rgba(221,221,221,0.20)] transition-all duration-700 ease-out group-hover:bg-[#23768C]"></div>
@@ -29,12 +37,12 @@ export default function DomainButton({title, buttonText="Learn more", handleDoma
           {/* TEXT (BOTTOM → TOP) */}
           <div
             className="
-              absolute left-1/2 bottom-8 -translate-x-1/2
+              absolute left-1/2 bottom-8 max-[767px]:bottom-10 -translate-x-1/2
               transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
               group-hover:top-16 group-hover:bottom-auto group-hover:-translate-y-0
             "
           >
-            <h2 className="text-[20px] 2xl:text-[27px] font-bold text-center" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <h2 className="text-[14px] sm:text-[20px] 2xl:text-[27px] font-bold text-center" style={{ fontFamily: 'Poppins, sans-serif' }}>
               {title}
             </h2>
           </div>
@@ -42,13 +50,14 @@ export default function DomainButton({title, buttonText="Learn more", handleDoma
           {/* BUTTON (hidden → bottom) */}
           <div
             className="
-              absolute left-1/2 bottom-6 -translate-x-1/2
+              absolute left-1/2 bottom-6 max-[767px]:bottom-2 -translate-x-1/2
               opacity-0 translate-y-6
+              max-[767px]:opacity-100 max-[767px]:translate-y-0
               transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
               group-hover:opacity-100 group-hover:translate-y-0
             "
           >
-            <button className="px-4 xl:px-12 xl:w-[230px] w-[180px] py-2 border border-white rounded-full" onClick={handleDomainClick}>
+            <button className="w-[180px] max-[767px]:w-[100px] max-[767px]:px-1 max-[767px]:py-1 max-[767px]:text-[10px] px-4 xl:px-12 xl:w-[230px] py-2 border border-white rounded-full" onClick={(event) => { event.stopPropagation(); handleDomainClick(); }}>
               {buttonText}
             </button>
           </div>

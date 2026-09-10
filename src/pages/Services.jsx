@@ -151,6 +151,7 @@ function playClickSound() {
 export default function Sercices() {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [tabStart, setTabStart] = useState(2);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({
     minWidth: 769,
@@ -167,15 +168,20 @@ export default function Sercices() {
     setIsFlipped(false);
   }, [activeIndex]);
 
+  const selectService = (index) => {
+    setActiveIndex(index);
+    setTabStart(Math.min(index - (index % 2), SERVICES.length - 2));
+  };
+
   const goNext = useCallback(() => {
     playClickSound();
-    setActiveIndex(i => Math.min(i + 1, SERVICES.length - 1));
-  }, []);
+    selectService(Math.min(activeIndex + 1, SERVICES.length - 1));
+  }, [activeIndex]);
 
   const goPrev = useCallback(() => {
     playClickSound();
-    setActiveIndex(i => Math.max(i - 1, 0));
-  }, []);
+    selectService(Math.max(activeIndex - 1, 0));
+  }, [activeIndex]);
 
   const canPrev = activeIndex > 0;
   const canNext = activeIndex < SERVICES.length - 1;
@@ -190,22 +196,22 @@ export default function Sercices() {
     <div
       style={{
         margin: isMobile ? 0 : '-24px -36px -40px',
-        paddingRight: isWide ? 100 : '48px',
-        minHeight: 'calc(100vh - 76px)',
+        paddingRight: isMobile ? '8px' : isWide ? 100 : '48px',
+        minHeight: isMobile ? 'auto' : 'calc(100vh - 76px)',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: isMobile ? 'flex-start' : 'center',
       }}
       className='px-2 sm:px-4 md:p-[40px 48px 48px 0]'
     >
       {/* ─── Services title block ─── */}
-      <div style={{ paddingLeft: isMobile ? 0 : isWeb ? '46%' : isDesktop ? '32%' : isTablet ? '26%' : '36%', marginBottom: isMobile ? 24 : 40 }}>
+      <div style={{ paddingLeft: isMobile ? 0 : isWeb ? '46%' : isDesktop ? '32%' : isTablet ? '26%' : '36%', marginBottom: isMobile ? 40 : 40 }}>
         <AnimatedText
           as="h1"
           text="Services"
           split="chars"
           stagger={0.05}
-          className="text-[32px] md:text-[44px] lg:text-[66px] xl:text-[66px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]"
+          className="mb-4 text-[32px] md:text-[44px] lg:text-[66px] xl:text-[66px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]"
           style={{ fontSize: isWeb && '65px' }}
         />
         <Reveal
@@ -229,16 +235,22 @@ export default function Sercices() {
       <Reveal className='px-0 sm:pl-32 flex flex-col lg:flex-row items-center lg:flex-start justify-end gap-0' y={48} delay={0.3} duration={1}>
         {/* ── Left panel: staircase tab list (414 × 556 px — exact Figma) ── */}
         <div
-          className='order-2 block lg:order-1'
+          className='order-1 block lg:order-1'
           style={{
             position: 'relative',
             width: isMobile ? '100%' : isTablet ? 414 : isDesktop ? 414 : isWeb ? 514 : 514,
             height: isMobile ? 'auto' : isTablet ? 411 : isDesktop ? 511 : 511,
             flexShrink: 0,
-            overflow: 'hidden',
+            overflowX: 'hidden',
+            overflowY: 'hidden',
+            display: isMobile ? 'flex' : 'block',
+            gap: isMobile ? 8 : 0,
+            paddingBottom: isMobile ? 4 : 0,
+            marginBottom: isMobile ? 12 : 0,
           }}
         >
-          {SERVICES.map((svc, i) => {
+          {(isMobile ? SERVICES.slice(tabStart, tabStart + 2) : SERVICES).map((svc, visibleIndex) => {
+            const i = isMobile ? tabStart + visibleIndex : visibleIndex;
             const delta = i - activeIndex;
             const left = tabLeft(delta);
             // Figma exact top values reproduced:
@@ -252,12 +264,13 @@ export default function Sercices() {
             return (
               <button
                 key={i}
-                onClick={() => setActiveIndex(i)}
+                onClick={() => selectService(i)}
                 style={{
                   position: isMobile ? 'relative' : 'absolute',
                   left: isMobile ? 0 : left,
                   top: isMobile ? 'auto' : top,
-                  width: isMobile ? '100%' : isTablet ? 288 : isDesktop ? 288 : isWeb ? 388 : 388,
+                  width: isMobile ? 'calc(50% - 4px)' : isTablet ? 288 : isDesktop ? 288 : isWeb ? 388 : 388,
+                  flexShrink: isMobile ? 0 : undefined,
                   background: isActive ? 'rgba(221,221,221,0.18)' : 'rgba(0,0,0,0)',
                   border: `${isActive ? '1px solid rgba(255,255,255,0.25)' : '1px solid white'}`,
                   borderRadius: 10,
@@ -272,7 +285,7 @@ export default function Sercices() {
                   opacity: isMobile ? 1 : opacity,
                   cursor: 'pointer',
                   pointerEvents: 'auto',
-                  marginBottom: isMobile ? 8 : 0,
+                  marginBottom: 0,
                   transition: [
                     'left 0.42s cubic-bezier(0.4,0,0.2,1)',
                     'top 0.42s cubic-bezier(0.4,0,0.2,1)',
@@ -287,6 +300,28 @@ export default function Sercices() {
               </button>
             );
           })}
+          {isMobile && (
+            <>
+              <button
+                type="button"
+                aria-label="Previous tabs"
+                disabled={tabStart === 0}
+                onClick={() => setTabStart((start) => Math.max(start - 2, 0))}
+                className="absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/35 text-white disabled:opacity-30"
+              >
+                <ArrowLeft size={16} />
+              </button>
+              <button
+                type="button"
+                aria-label="Next tabs"
+                disabled={tabStart + 2 >= SERVICES.length}
+                onClick={() => setTabStart((start) => Math.min(start + 2, SERVICES.length - 2))}
+                className="absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/35 text-white disabled:opacity-30"
+              >
+                <ArrowRight size={16} />
+              </button>
+            </>
+          )}
         </div>
 
         {/* ── Right panel: content card (544 × 511 px — exact Figma) ── */}
@@ -297,12 +332,12 @@ export default function Sercices() {
           onBlur={() => setIsFlipped(false)}
           style={{
             width: isMobile ? '100%' : isTablet ? 444 : isDesktop ? 544 : isWeb ? 544 : 544,
-            minHeight: isMobile ? 360 : isTablet ? 311 : isDesktop ? 411 : 511,
+            minHeight: isMobile ? 300 : isTablet ? 311 : isDesktop ? 411 : 511,
             flexShrink: 0,
             position: 'relative',
             perspective: 1200,
           }}
-          className='order-1 ml-0 md:ml-[30px] lg:order-2'
+          className='order-2 ml-0 md:ml-[30px] lg:order-2 mt-6 md:mt-0'
         >
           <div
             tabIndex={0}

@@ -28,6 +28,7 @@ export default function Topbar() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+          gap: 16,
         background: 'transparent',
         position: 'sticky',
         top: 0,
@@ -59,6 +60,7 @@ export default function Topbar() {
           whiteSpace: 'nowrap',
           transition: 'background 0.2s ease',
           width: isWeb ? '388px' : isDesktop ? '388px' : isTablet ? '288px' : '188px',
+          display: isMobile ? 'none' : 'block',
         }}
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
