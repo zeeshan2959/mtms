@@ -43,6 +43,13 @@ function Domain() {
             description: 'Our expertise spans in comprehensive product design solutions for consumer appliances, including detailed design development, ergonomic and packaging studies, and compliance documentation. Our capabilities span component and system design, performance testing, and complete technical documentation to ensure functionality, safety, and manufacturability throughout the development lifecycle.',
             summary: 'Creating robust 3D models and user-oriented technical documentation for high-volume consumer products',
         },
+        {
+            title: 'Internet of Things',
+            buttonText: 'Learn more',
+            image: '/domain/fridge.png',
+            description: 'Our expertise spans in comprehensive product design solutions for consumer appliances, including detailed design development, ergonomic and packaging studies, and compliance documentation. Our capabilities span component and system design, performance testing, and complete technical documentation to ensure functionality, safety, and manufacturability throughout the development lifecycle.',
+            summary: 'Creating robust 3D models and user-oriented technical documentation for high-volume consumer products',
+        },
     ]
     const selectedDomain = domains.find(domain => domain.title === activeDomain) ?? domains[0];
 

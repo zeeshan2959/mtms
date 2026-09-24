@@ -228,36 +228,7 @@ export default function LoadingScreen({ isReady, onComplete }) {
       ))}
 
       {/* Milestone percentage labels: 0 20 40 60 80 100 */}
-      <div style={{
-        display: "flex", gap: 20, marginBottom: 24,
-        fontFamily: "'Orbitron', sans-serif",
-      }}>
-        {[0, 20, 40, 60, 80, 100].map((milestone) => {
-          const reached = pctDisplay >= milestone;
-          const isActive = pctDisplay >= milestone && (milestone === 100 || pctDisplay < milestone + 20);
-          return (
-            <div key={milestone} style={{
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-            }}>
-              <div style={{
-                width: 6, height: 6, borderRadius: "50%",
-                background: reached ? "#2D9297" : "rgba(255,255,255,0.15)",
-                boxShadow: isActive ? "0 0 8px rgba(45,146,151,0.8)" : "none",
-                transition: "background 0.3s, box-shadow 0.3s",
-              }} />
-              <span style={{
-                fontSize: 9,
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                color: reached ? (isActive ? "#2D9297" : "rgba(255,255,255,0.45)") : "rgba(255,255,255,0.15)",
-                transition: "color 0.3s",
-              }}>
-                {milestone}%
-              </span>
-            </div>
-          );
-        })}
-      </div>
+      
 
       {/* Circular loader */}
       <div style={{ position: "relative", width: 220, height: 220, marginBottom: 32 }}>
@@ -312,49 +283,6 @@ export default function LoadingScreen({ isReady, onComplete }) {
         )}
       </div>
 
-      {/* Status label */}
-      <div
-        key={currentStage.label}
-        style={{
-          fontFamily: "'Rajdhani', sans-serif",
-          fontSize: 13, fontWeight: 300,
-          letterSpacing: "0.35em", textTransform: "uppercase",
-          color: "rgba(255,255,255,0.35)",
-          marginBottom: 24,
-          animation: "fadeUp 0.4s ease both",
-        }}
-      >
-        {currentStage.label}
-      </div>
-
-      {/* Progress bar with milestone markers */}
-      {!done && (
-        <div style={{ width: 320, marginBottom: 12 }}>
-          {/* Bar */}
-          <div style={{
-            width: "100%", height: 2,
-            background: "rgba(255,255,255,0.06)",
-            borderRadius: 2, overflow: "visible",
-            position: "relative",
-          }}>
-            <div style={{
-              height: "100%", width: `${progress}%`,
-              background: "linear-gradient(90deg, #11163D, #212E60, #2D9297)",
-              transition: "width 0.3s linear", borderRadius: 2,
-            }} />
-            {/* Milestone tick marks on bar */}
-            {[20, 40, 60, 80].map((m) => (
-              <div key={m} style={{
-                position: "absolute", top: "50%",
-                left: `${m}%`, transform: "translate(-50%, -50%)",
-                width: 1, height: 8,
-                background: pctDisplay >= m ? "rgba(45,146,151,0.6)" : "rgba(255,255,255,0.15)",
-                transition: "background 0.3s",
-              }} />
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Stalled notice when waiting for video */}
       {!done && !isReady && pctDisplay >= 80 && (

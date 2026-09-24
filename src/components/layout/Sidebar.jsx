@@ -207,7 +207,7 @@ function MobileSidebar({ playClickSound }) {
         aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
         aria-expanded={isOpen}
         onClick={() => setIsOpen((open) => !open)}
-        className="relative z-10 flex h-10 w-14 items-center justify-center rounded-md border border-white/30 bg-black/30 text-white backdrop-blur-md"
+        className="relative z-10 flex h-10 w-14 items-center justify-center rounded-md text-white"
       >
         {isOpen ? <X size={21} /> : <Menu size={21} />}
       </button>

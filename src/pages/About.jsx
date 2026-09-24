@@ -11,6 +11,7 @@ export default function About() {
   const tabs = [
     { name: "Mission", current: true },
     { name: "Location", current: false },
+    { name: "Cliens", current: false },
   ];
 
   return (
@@ -35,7 +36,7 @@ export default function About() {
       <div>
         <TextComponent text="Delivering reliable engneering solutions to clients across regions and time zones through seamless global collaboration. With a presence across multiple locations, we ensure consistent support and connectivity wherever our clients operate." />
       </div>
-      <Reveal className="mb-4 grid w-full max-w-[940px] grid-cols-2 justify-center gap-2 mx-auto sm:flex sm:flex-wrap sm:gap-8" y={20} blur={0} duration={0.7}>
+      <Reveal className="mb-4 grid w-full max-w-[940px] grid-cols-3 justify-center gap-2 mx-auto sm:flex sm:flex-wrap sm:gap-8" y={20} blur={0} duration={0.7}>
         {tabs.map((tab) => (
           <button
             onClick={() => setActiveTab(tab.name)}
@@ -69,6 +70,11 @@ export default function About() {
           <WorldMapSection showTimezoneTooltip />
           <TextComponent text="Our clients are bases across North America, South America, Asia-Pecific and EMEA, reflecting our global approach to engineering collaboration. We support orgranizations operating in diverse and demanding industries, working closely with Tier-1 suppliers and OEMs." />
         </>
+      )}
+      {activeTab === "Cliens" && (
+        <div className="text-center ">
+          Comming soon...
+        </div>
       )}
     </>
   );
