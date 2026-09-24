@@ -3,11 +3,13 @@ import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import LoadingScreen from "../ui/LoadingScreen";
 import AnimatedBackground from "../ui/AnimatedBackground";
-import PageTransition from "../ui/PageTransition";
+import useFullPageScroll from "../../hooks/useFullPageScroll";
 
 export default function MainLayout({ children }) {
   const [showLoader, setShowLoader] = useState(true);
   const [bgReady, setBgReady] = useState(false);
+
+  useFullPageScroll(!showLoader);
 
   // The animated background is rendered instantly (no asset to download),
   // so let the loader proceed as soon as the layout mounts.
@@ -17,7 +19,7 @@ export default function MainLayout({ children }) {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", position: "relative", color: "#fff" }}>
+    <div className="relative h-dvh max-h-dvh overflow-hidden text-white">
 
       {showLoader && (
         <LoadingScreen
@@ -41,10 +43,10 @@ export default function MainLayout({ children }) {
 
       <Sidebar />
 
-      <div className="z-30 relative flex flex-col min-h-screen">
+      <div className="relative z-30 flex h-full min-h-0 flex-col">
         <Topbar />
-        <main id="app-scroll" className="relative z-30 h-[calc(100vh-110px)] min-w-0 overflow-x-hidden overflow-y-auto p-[10px_12px_40px] sm:p-[24px_36px_40px]">
-          <PageTransition>{children}</PageTransition>
+        <main id="app-scroll" className="relative z-30 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-none p-[10px_12px_24px] sm:p-[24px_36px_40px]">
+          {children}
         </main>
       </div>
     </div>

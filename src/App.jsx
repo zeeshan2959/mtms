@@ -1,28 +1,19 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { PageTransitionDirectionProvider } from './context/PageTransitionDirectionContext';
+import { PageShiftProvider } from './context/PageShiftContext';
 import MainLayout from './components/layout/MainLayout';
-import Dashboard from './pages/Dashboard';
-import Contact from './pages/Contact';
-import About from './pages/About';
-import Services from './pages/Services';
-import RAndDTeams from './pages/RAndDTeams';
-import Domain from './pages/Domain';
+import PageShiftOutlet from './components/layout/PageShiftOutlet';
 
 function App() {
   return (
     <BrowserRouter>
-      <PageTransitionDirectionProvider>
-      <MainLayout>
-        <Routes>
-          <Route path="/"             element={<Dashboard />} />
-          <Route path="/domain"     element={<Domain />} />
-          <Route path="/contact"       element={<Contact />} />
-          <Route path="/about"        element={<About />} />
-          <Route path="/services"     element={<Services />} />
-          <Route path="/teams"     element={<RAndDTeams />} />
-        </Routes>
-      </MainLayout>
-      </PageTransitionDirectionProvider>
+      <PageShiftProvider>
+        <PageTransitionDirectionProvider>
+          <MainLayout>
+            <PageShiftOutlet />
+          </MainLayout>
+        </PageTransitionDirectionProvider>
+      </PageShiftProvider>
     </BrowserRouter>
   );
 }

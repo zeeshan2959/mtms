@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { usePageShift } from '../../context/PageShiftContext';
 import hoverSound from '/clickedSound.wav';
 import imgHome from '/home.png';
 import imgCircleInfo from '/circle-info.png';
@@ -24,6 +25,7 @@ export default function Sidebar() {
   const [hoveredPath, setHoveredPath] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const location = useLocation();
+  const { setDirectionForPath } = usePageShift();
 
   const audioRef = useRef(null);
   let collapseTimeout = useRef(null);
@@ -105,6 +107,7 @@ export default function Sidebar() {
           <NavLink
             key={path}
             to={path}
+            onClick={() => setDirectionForPath(path)}
             onMouseEnter={() => {
               setHoveredPath(path);
               playSound();
@@ -195,6 +198,7 @@ export default function Sidebar() {
 function MobileSidebar({ playClickSound }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { setDirectionForPath } = usePageShift();
 
   useEffect(() => {
     setIsOpen(false);
@@ -224,6 +228,7 @@ function MobileSidebar({ playClickSound }) {
                 <NavLink
                   key={path}
                   to={path}
+                  onClick={() => setDirectionForPath(path)}
                   className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${isActive ? 'bg-white/15 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
                 >
                   <img src={img} alt="" className="h-5 w-5 object-contain" />
@@ -234,7 +239,10 @@ function MobileSidebar({ playClickSound }) {
           </div>
           <NavLink
             to="/contact"
-            onClick={playClickSound}
+            onClick={() => {
+              playClickSound();
+              setDirectionForPath("/contact");
+            }}
             className="mt-3 flex items-center justify-center rounded-full border border-white px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-white/10"
           >
             Book a meeting

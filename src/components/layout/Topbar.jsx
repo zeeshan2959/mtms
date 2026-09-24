@@ -2,6 +2,7 @@ import { useMediaQuery } from "react-responsive";
 import { Link, NavLink } from "react-router-dom";
 import imgLogo from '/Logo.svg';
 import clickSoundFile from '/clickedSound.wav';
+import { usePageShift } from "../../context/PageShiftContext";
 
 const clickAudio = new Audio(clickSoundFile);
 
@@ -11,6 +12,7 @@ function playClickSound() {
 }
 
 export default function Topbar() {
+  const { setDirectionForPath } = usePageShift();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({
     minWidth: 769,
@@ -44,7 +46,7 @@ export default function Topbar() {
       }}
     >
       {/* MTMS Engineering logo — exact Figma asset */}
-      <Link to="/">
+      <Link to="/" onClick={() => setDirectionForPath("/")}>
         <img
           src={imgLogo}
           alt="MTMS Engineering"
@@ -75,7 +77,10 @@ export default function Topbar() {
         }}
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-        onClick={playClickSound}
+        onClick={() => {
+          playClickSound();
+          setDirectionForPath("/contact");
+        }}
       >
         Book a meeting
       </NavLink>
