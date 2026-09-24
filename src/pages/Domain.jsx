@@ -44,11 +44,11 @@ function Domain() {
             summary: 'Creating robust 3D models and user-oriented technical documentation for high-volume consumer products',
         },
         {
-            title: 'Internet of Things',
+            title: 'IOT Devices',
             buttonText: 'Learn more',
             image: '/domain/fridge.png',
             description: 'Our expertise spans in comprehensive product design solutions for consumer appliances, including detailed design development, ergonomic and packaging studies, and compliance documentation. Our capabilities span component and system design, performance testing, and complete technical documentation to ensure functionality, safety, and manufacturability throughout the development lifecycle.',
-            summary: 'Creating robust 3D models and user-oriented technical documentation for high-volume consumer products',
+            summary: 'We deliver robust engineering support for IoT hardware and smart device development, including detailed CAD design, integration studies, and regulatory compliance documentation. Our services span component design, connectivity and performance validation, system‑level integration, and comprehensive technical documentation across both prototyping and production stages.',
         },
     ]
     const selectedDomain = domains.find(domain => domain.title === activeDomain) ?? domains[0];
