@@ -7,7 +7,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* <App /> */}
     <div className="text-center text-2xl font-bold mt-20">
-    contact this number 03084902959
+    Server is down
 
     </div>
   </StrictMode>,
