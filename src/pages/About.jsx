@@ -77,7 +77,7 @@ export default function About() {
         >
           <Reveal scale={0.96} y={40} duration={1.1}>
             
-            <video src="/public/about/mission.webm" autoPlay loop muted></video>
+            <video src="/about/mission.webm" autoPlay loop muted playsInline preload="auto" className="h-auto w-full max-w-[520px]" />
           </Reveal>
           <TextComponent text="To become a golbally trusted engineering partner by delivering innovative, high-quality and cost-effective solutions that help our cliens succeed in a competitive global market. We strive to maximise efficiency and value through strong technical expertise, collaborative partnerships and a commitment to consistent engineering excellence." />
         </div>

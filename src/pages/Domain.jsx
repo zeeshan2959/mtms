@@ -166,6 +166,8 @@ function TransparentDomainImage({ src, alt }) {
         if (!canvas) return undefined;
 
         const image = new Image();
+        image.fetchPriority = 'high';
+        image.decoding = 'async';
         image.src = src;
         image.onload = () => {
             const context = canvas.getContext('2d', { willReadFrequently: true });
