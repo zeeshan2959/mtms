@@ -3,10 +3,15 @@ import { useMediaQuery } from 'react-responsive';
 import DomainButton from '../components/ui/DomainButton';
 import AnimatedText from '../components/ui/AnimatedText';
 import Reveal from '../components/ui/Reveal';
+import { X } from 'lucide-react';
+import { playInteractionSound } from '../lib/interactionSound';
 
 function Domain() {
     const isWeb = useMediaQuery({ minWidth: 1920 });
+    const isMobile = useMediaQuery({ maxWidth: 768 });
     const [activeDomain, setActiveDomain] = useState('Automotive');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const popupTouchStart = useRef(null);
     const domains = [
         {
             title: 'Automotive',
@@ -52,10 +57,37 @@ function Domain() {
         },
     ]
     const selectedDomain = domains.find(domain => domain.title === activeDomain) ?? domains[0];
+    const selectedDomainIndex = domains.findIndex(domain => domain.title === selectedDomain.title);
 
     const handleDomainClick = (domain) => {
         setActiveDomain(domain);
     }
+
+    const handleLearnMore = (domain) => {
+        setActiveDomain(domain);
+        if (isMobile) setIsPopupOpen(true);
+    };
+
+    const handlePopupTouchStart = (event) => {
+        if (isMobile) {
+            popupTouchStart.current = {
+                x: event.touches[0].clientX,
+                y: event.touches[0].clientY,
+            };
+        }
+    };
+
+    const handlePopupTouchEnd = (event) => {
+        if (!isMobile || !popupTouchStart.current) return;
+        const deltaX = event.changedTouches[0].clientX - popupTouchStart.current.x;
+        const deltaY = event.changedTouches[0].clientY - popupTouchStart.current.y;
+        popupTouchStart.current = null;
+        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+        const nextIndex = Math.max(0, Math.min(domains.length - 1, selectedDomainIndex + (deltaX < 0 ? 1 : -1)));
+        if (nextIndex !== selectedDomainIndex) playInteractionSound();
+        setActiveDomain(domains[nextIndex].title);
+    };
 
     return (
         <div className='w-full flex flex-col justify-center items-center lg:flex-row'>
@@ -66,16 +98,8 @@ function Domain() {
                 </div>
                 <div className='grid grid-cols-2 gap-3 w-full lg:hidden'>
                     {domains.map((domain) => (
-                        <DomainButton key={domain.title} title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} className='w-full h-[120px] rounded-[16px]' />
+                        <DomainButton key={domain.title} title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} onLearnMore={() => handleLearnMore(domain.title)} className='w-full h-[120px] rounded-[16px]' />
                     ))}
-                </div>
-                <div className='w-full lg:hidden mt-5'>
-                    <Reveal key={selectedDomain.title} scale={0.94} y={30} duration={1.1}>
-                        <TransparentDomainImage src={selectedDomain.image} alt={selectedDomain.title} />
-                    </Reveal>
-                    <p className='mt-3 text-[14px] sm:text-[18px] font-bold text-center' style={{ fontFamily: 'Poppins, sans-serif' }}>
-                        {selectedDomain.summary}
-                    </p>
                 </div>
                 <div className='hidden lg:flex flex-col gap-4 items-center justify-end'>
                     <Reveal scale={0.94} y={30} duration={1.1}>
@@ -97,13 +121,39 @@ function Domain() {
                     <div className='hidden lg:grid grid-cols-2'>
                         {domains.map((domain, i) => (
                             <Reveal key={domain.title} y={26} blur={0} duration={0.7} delay={0.08 * i}>
-                                <DomainButton title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} />
+                                <DomainButton title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} onLearnMore={() => handleLearnMore(domain.title)} />
                             </Reveal>
                         ))}
                     </div>
                 </div>
 
             </div>
+            {isMobile && isPopupOpen && (
+                <div
+                    role="presentation"
+                    onClick={(event) => { if (event.target === event.currentTarget) setIsPopupOpen(false); }}
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-5 backdrop-blur-sm"
+                >
+                    <section
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="domain-dialog-title"
+                        onTouchStart={handlePopupTouchStart}
+                        onTouchEnd={handlePopupTouchEnd}
+                        className="relative max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-xl border border-white/20 bg-[#101820] p-5 text-white shadow-2xl"
+                    >
+                        <button type="button" aria-label="Close domain details" onClick={() => setIsPopupOpen(false)} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/40">
+                            <X size={18} />
+                        </button>
+                        <h2 id="domain-dialog-title" className="pr-12 text-xl font-bold" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.title}</h2>
+                        <div className="mx-auto mt-3 max-w-[280px]">
+                            <TransparentDomainImage src={selectedDomain.image} alt={selectedDomain.title} />
+                        </div>
+                        <p className="mt-3 text-sm font-semibold leading-6" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.summary}</p>
+                        <p className="mt-3 text-sm leading-6 text-white/80" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.description}</p>
+                    </section>
+                </div>
+            )}
         </div>
     )
 }

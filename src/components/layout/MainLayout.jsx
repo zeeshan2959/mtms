@@ -1,15 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import LoadingScreen from "../ui/LoadingScreen";
 import AnimatedBackground from "../ui/AnimatedBackground";
 import useFullPageScroll from "../../hooks/useFullPageScroll";
+import { playInteractionSound } from "../../lib/interactionSound";
 
 export default function MainLayout({ children }) {
+  const location = useLocation();
+  const previousPath = useRef(location.pathname);
+  const lastControlClick = useRef(0);
   const [showLoader, setShowLoader] = useState(true);
   const [bgReady, setBgReady] = useState(false);
 
   useFullPageScroll(!showLoader);
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      const control = event.target instanceof Element
+        ? event.target.closest("button, a, [role='button']")
+        : null;
+      if (!control || control.disabled || control.getAttribute("aria-disabled") === "true") return;
+
+      lastControlClick.current = Date.now();
+      if (control.dataset.soundHandled !== "true") playInteractionSound();
+    };
+
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
+
+  useEffect(() => {
+    if (previousPath.current === location.pathname) return;
+    previousPath.current = location.pathname;
+    if (Date.now() - lastControlClick.current > 500) playInteractionSound();
+  }, [location.pathname]);
 
   // The animated background is rendered instantly (no asset to download),
   // so let the loader proceed as soon as the layout mounts.

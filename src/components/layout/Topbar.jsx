@@ -1,15 +1,7 @@
 import { useMediaQuery } from "react-responsive";
 import { Link, NavLink } from "react-router-dom";
 import imgLogo from '/Logo.svg';
-import clickSoundFile from '/clickedSound.wav';
 import { usePageShift } from "../../context/PageShiftContext";
-
-const clickAudio = new Audio(clickSoundFile);
-
-function playClickSound() {
-  clickAudio.currentTime = 0;
-  clickAudio.play().catch(() => {});
-}
 
 export default function Topbar() {
   const { setDirectionForPath } = usePageShift();
@@ -34,7 +26,7 @@ export default function Topbar() {
   return (
     <header
       style={{
-        padding: isWeb ? '68px 76px 20px 60px' : isDesktop ? '40px 66px 20px 66px' : isTablet ? '40px 20px 20px' : '30px 20px',
+        padding: isWeb ? '68px 76px 20px 60px' : isDesktop ? '40px 66px 20px 66px' : isTablet ? '40px 20px 20px' : isMobile ? '22px 78px 20px 20px' : '30px 20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -58,27 +50,26 @@ export default function Topbar() {
       <NavLink
         to="/contact"
         style={{
-          padding: isWeb ? '10px 32px' : isDesktop ? '10px 32px' : isTablet ? '10px 22px' : '8px 12px',
+          padding: isWeb ? '10px 32px' : isDesktop ? '10px 32px' : isTablet ? '10px 22px' : '6px 8px',
           border: isWeb ? '2px solid #ffffff' : isDesktop ? '2px solid #ffffff' : isTablet ? '1px solid #ffffff' : '1px solid #ffffff',
           borderRadius: 35,
           background: 'transparent',
           color: '#ffffff',
           fontFamily: 'Poppins, sans-serif',
           fontWeight: 700,
-          fontSize: isWeb ? '16px' : isDesktop ? '16px' : isTablet ? '14px' : '12px',
+          fontSize: isWeb ? '16px' : isDesktop ? '16px' : isTablet ? '14px' : '10px',
           cursor: 'pointer',
           letterSpacing: '0.02em',
           whiteSpace: 'nowrap',
           transition: 'background 0.2s ease',
-          width: isWeb ? '388px' : isDesktop ? '388px' : isTablet ? '288px' : '188px',
-          display: isMobile ? 'none' : 'flex',
+          width: isWeb ? '388px' : isDesktop ? '388px' : isTablet ? '288px' : 'auto',
+          display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
         }}
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
         onClick={() => {
-          playClickSound();
           setDirectionForPath("/contact");
         }}
       >

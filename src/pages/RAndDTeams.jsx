@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import clickSoundFile from "/clickedSound.wav";
 import AnimatedText from '../components/ui/AnimatedText';
@@ -139,6 +139,8 @@ function playClickSound() {
 export default function RAndDTeams() {
   const [activeIndex, setActiveIndex] = useState(2); 
   const [tabStart, setTabStart] = useState(2);
+  const swipeStart = useRef(null);
+  const suppressSwipeClickUntil = useRef(0);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({
     minWidth: 769,
@@ -170,9 +172,34 @@ export default function RAndDTeams() {
   const canNext = activeIndex < SERVICES.length - 1;
   const active = SERVICES[activeIndex];
   const frontItems = active.frontItems ?? DEFAULT_FRONT_ITEMS;
+  const handleTouchStart = (event) => {
+    if (isMobile) {
+      swipeStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    }
+  };
+  const handleTouchEnd = (event) => {
+    if (!isMobile || !swipeStart.current) return;
+    const deltaX = event.changedTouches[0].clientX - swipeStart.current.x;
+    const deltaY = event.changedTouches[0].clientY - swipeStart.current.y;
+    swipeStart.current = null;
+    if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+    suppressSwipeClickUntil.current = Date.now() + 500;
+    if (deltaX < 0) goNext();
+    else goPrev();
+  };
 
   return (
     <div
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onClickCapture={(event) => {
+        if (Date.now() < suppressSwipeClickUntil.current) {
+          suppressSwipeClickUntil.current = 0;
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }}
       style={{
         margin: isMobile ? 0 : '-24px -36px -40px',
         paddingRight: isMobile ? '8px' : isWide ? 100 : '48px',
@@ -284,6 +311,7 @@ export default function RAndDTeams() {
             <>
               <button
                 type="button"
+                data-sound-handled="true"
                 aria-label="Previous tabs"
                 disabled={tabStart === 0}
                 onClick={() => {
@@ -296,6 +324,7 @@ export default function RAndDTeams() {
               </button>
               <button
                 type="button"
+                data-sound-handled="true"
                 aria-label="Next tabs"
                 disabled={tabStart + 2 >= SERVICES.length}
                 onClick={() => {
@@ -473,6 +502,7 @@ function RoundBtn({ onClick, disabled, label, children }) {
     <button
       onClick={onClick}
       disabled={disabled}
+      data-sound-handled="true"
       aria-label={label}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}

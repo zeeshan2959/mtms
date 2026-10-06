@@ -4,8 +4,8 @@ import { SCROLLER_ID } from "../lib/gsap";
 
 const WHEEL_THRESHOLD = 48;
 const SWIPE_THRESHOLD = 52;
-const EDGE_SLACK = 28;
-const NEGLIGIBLE_OVERFLOW = 64;
+const EDGE_SLACK = 1;
+const NEGLIGIBLE_OVERFLOW = 1;
 
 function isEditableTarget(target) {
   if (!(target instanceof Element)) return false;

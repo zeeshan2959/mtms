@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import clickSoundFile from "/clickedSound.wav";
 import AnimatedText from '../components/ui/AnimatedText';
@@ -152,6 +152,9 @@ export default function Sercices() {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isFlipped, setIsFlipped] = useState(false);
   const [tabStart, setTabStart] = useState(2);
+  const cardRef = useRef(null);
+  const swipeStart = useRef(null);
+  const suppressSwipeClickUntil = useRef(0);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({
     minWidth: 769,
@@ -191,9 +194,36 @@ export default function Sercices() {
   const frontIconTypes = active.frontIconTypes ?? DEFAULT_FRONT_ICON_TYPES;
   const frontTitle = active.frontTitle ?? active.subtitle;
   const frontDescription = active.frontDescription ?? active.description.split('\n\n')[0];
+  const handleTouchStart = (event) => {
+    if (!isMobile) return;
+    swipeStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    if (!cardRef.current?.contains(event.target)) setIsFlipped(false);
+  };
+  const handleTouchEnd = (event) => {
+    if (!isMobile || !swipeStart.current) return;
+    const deltaX = event.changedTouches[0].clientX - swipeStart.current.x;
+    const deltaY = event.changedTouches[0].clientY - swipeStart.current.y;
+    swipeStart.current = null;
+    if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+    suppressSwipeClickUntil.current = Date.now() + 500;
+    if (deltaX < 0) goNext();
+    else goPrev();
+  };
 
   return (
     <div
+      onTouchStart={(event) => {
+        handleTouchStart(event);
+      }}
+      onTouchEnd={handleTouchEnd}
+      onClickCapture={(event) => {
+        if (Date.now() < suppressSwipeClickUntil.current) {
+          suppressSwipeClickUntil.current = 0;
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }}
       style={{
         margin: isMobile ? 0 : '-24px -36px -40px',
         paddingRight: isMobile ? '8px' : isWide ? 100 : '48px',
@@ -304,6 +334,7 @@ export default function Sercices() {
             <>
               <button
                 type="button"
+                data-sound-handled="true"
                 aria-label="Previous tabs"
                 disabled={tabStart === 0}
                 onClick={() => {
@@ -316,6 +347,7 @@ export default function Sercices() {
               </button>
               <button
                 type="button"
+                data-sound-handled="true"
                 aria-label="Next tabs"
                 disabled={tabStart + 2 >= SERVICES.length}
                 onClick={() => {
@@ -332,8 +364,9 @@ export default function Sercices() {
 
         {/* ── Right panel: content card (544 × 511 px — exact Figma) ── */}
         <div
-          onMouseEnter={() => setIsFlipped(true)}
-          onMouseLeave={() => setIsFlipped(false)}
+          ref={cardRef}
+          onMouseEnter={() => { if (!isMobile) setIsFlipped(true); }}
+          onMouseLeave={() => { if (!isMobile) setIsFlipped(false); }}
           onFocus={() => setIsFlipped(true)}
           onBlur={() => setIsFlipped(false)}
           style={{
@@ -347,7 +380,15 @@ export default function Sercices() {
         >
           <div
             tabIndex={0}
+            role="button"
             aria-label={`${active.flipTitle ?? active.name.replace(/\s+/g, ' ')} details`}
+            onClick={() => setIsFlipped(true)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setIsFlipped(true);
+              }
+            }}
             style={{
               position: 'absolute',
               inset: 0,
@@ -751,6 +792,7 @@ function RoundBtn({ onClick, disabled, label, children, compact = false }) {
     <button
       onClick={onClick}
       disabled={disabled}
+      data-sound-handled="true"
       aria-label={label}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}

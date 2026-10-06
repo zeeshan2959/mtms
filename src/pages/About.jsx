@@ -1,18 +1,37 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import WorldMapSection from "../components/ui/WorldMap";
 import TextComponent from "../components/ui/TextComponent";
 import AnimatedText from "../components/ui/AnimatedText";
 import Reveal from "../components/ui/Reveal";
+import { playInteractionSound } from "../lib/interactionSound";
 
 export default function About() {
   const isWeb = useMediaQuery({ minWidth: 1920 });
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const [activeTab, setActiveTab] = useState("Mission");
+  const touchStart = useRef(null);
   const tabs = [
     { name: "Mission", current: true },
     { name: "Location", current: false },
     { name: "Cliens", current: false },
   ];
+  const handleTouchStart = (event) => {
+    if (isMobile) {
+      touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    }
+  };
+  const handleTouchEnd = (event) => {
+    if (!isMobile || !touchStart.current) return;
+    const deltaX = event.changedTouches[0].clientX - touchStart.current.x;
+    const deltaY = event.changedTouches[0].clientY - touchStart.current.y;
+    touchStart.current = null;
+    if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    const currentIndex = tabs.findIndex((tab) => tab.name === activeTab);
+    const nextIndex = Math.max(0, Math.min(tabs.length - 1, currentIndex + (deltaX < 0 ? 1 : -1)));
+    if (nextIndex !== currentIndex) playInteractionSound();
+    setActiveTab(tabs[nextIndex].name);
+  };
 
   return (
     <>
@@ -36,6 +55,7 @@ export default function About() {
       <div>
         <TextComponent text="Delivering reliable engneering solutions to clients across regions and time zones through seamless global collaboration. With a presence across multiple locations, we ensure consistent support and connectivity wherever our clients operate." />
       </div>
+      <div className="w-full" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchCancel={() => { touchStart.current = null; }}>
       <Reveal className="mb-4 grid w-full max-w-[940px] grid-cols-3 justify-center gap-2 mx-auto sm:flex sm:flex-wrap sm:gap-8" y={20} blur={0} duration={0.7}>
         {tabs.map((tab) => (
           <button
@@ -56,11 +76,8 @@ export default function About() {
           className="mb-4 flex w-full max-w-[940px] justify-center flex-col items-center gap-6 rounded-[15px] md:mx-auto px-3 sm:gap-10 sm:px-[30px] 3xl:max-w-[967px] 3xl:px-[35px] py-4 sm:py-[20px]"
         >
           <Reveal scale={0.96} y={40} duration={1.1}>
-            <img
-              src="/about/mission.png"
-              alt="Mission"
-              className="h-auto max-h-[320px] w-full max-w-[520px] object-contain"
-            />
+            
+            <video src="/public/about/mission.webm" autoPlay loop muted></video>
           </Reveal>
           <TextComponent text="To become a golbally trusted engineering partner by delivering innovative, high-quality and cost-effective solutions that help our cliens succeed in a competitive global market. We strive to maximise efficiency and value through strong technical expertise, collaborative partnerships and a commitment to consistent engineering excellence." />
         </div>
@@ -76,6 +93,7 @@ export default function About() {
           Comming soon...
         </div>
       )}
+      </div>
     </>
   );
 }
