@@ -7,7 +7,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* <App /> */}
     <div className="text-center text-2xl font-bold mt-20">
-    Server is down
+    Server is down.
 
     </div>
   </StrictMode>,
