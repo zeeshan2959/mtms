@@ -3,15 +3,12 @@ import { useMediaQuery } from 'react-responsive';
 import DomainButton from '../components/ui/DomainButton';
 import AnimatedText from '../components/ui/AnimatedText';
 import Reveal from '../components/ui/Reveal';
-import { X } from 'lucide-react';
 import { playInteractionSound } from '../lib/interactionSound';
 
 function Domain() {
     const isWeb = useMediaQuery({ minWidth: 1920 });
-    const isMobile = useMediaQuery({ maxWidth: 768 });
     const [activeDomain, setActiveDomain] = useState('Automotive');
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const popupTouchStart = useRef(null);
+    const domainTouchStart = useRef(null);
     const domains = [
         {
             title: 'Automotive',
@@ -65,23 +62,20 @@ function Domain() {
 
     const handleLearnMore = (domain) => {
         setActiveDomain(domain);
-        if (isMobile) setIsPopupOpen(true);
     };
 
-    const handlePopupTouchStart = (event) => {
-        if (isMobile) {
-            popupTouchStart.current = {
-                x: event.touches[0].clientX,
-                y: event.touches[0].clientY,
-            };
-        }
+    const handleDomainTouchStart = (event) => {
+        domainTouchStart.current = {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY,
+        };
     };
 
-    const handlePopupTouchEnd = (event) => {
-        if (!isMobile || !popupTouchStart.current) return;
-        const deltaX = event.changedTouches[0].clientX - popupTouchStart.current.x;
-        const deltaY = event.changedTouches[0].clientY - popupTouchStart.current.y;
-        popupTouchStart.current = null;
+    const handleDomainTouchEnd = (event) => {
+        if (!domainTouchStart.current) return;
+        const deltaX = event.changedTouches[0].clientX - domainTouchStart.current.x;
+        const deltaY = event.changedTouches[0].clientY - domainTouchStart.current.y;
+        domainTouchStart.current = null;
         if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
 
         const nextIndex = Math.max(0, Math.min(domains.length - 1, selectedDomainIndex + (deltaX < 0 ? 1 : -1)));
@@ -96,9 +90,31 @@ function Domain() {
                     <AnimatedText as="h1" text="Domains" split="chars" stagger={0.05} className="text-[32px] md:text-[44px] lg:text-[46px] xl:text-[56px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }} />
                     {/* <p className='text-white text-[18px]' style={{ fontFamily: 'Poppins, sans-serif' }}>Lorem ipsum dolor sit amet consectetur. Tellus blandit pellentesque duis eu at. Id sociis augue.</p> */}
                 </div>
-                <div className='grid grid-cols-2 gap-3 w-full lg:hidden'>
+                <div id="domain-mobile-panel" role="tabpanel" aria-labelledby={`domain-tab-${selectedDomain.title}`} className="w-full lg:hidden" onTouchStart={handleDomainTouchStart} onTouchEnd={handleDomainTouchEnd}>
+                    <div className="mx-auto max-w-[420px]">
+                        <div className="mx-auto max-w-[280px]">
+                            <TransparentDomainImage src={selectedDomain.image} alt={selectedDomain.title} />
+                        </div>
+                        <h2 className="mt-2 text-xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.title}</h2>
+                        <p className="mt-2 text-sm font-semibold leading-6 text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.summary}</p>
+                        <p className="mt-2 text-sm leading-6 text-white/80" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.description}</p>
+                    </div>
+                </div>
+                <div role="tablist" aria-label="Domains" className="flex w-full gap-2 overflow-x-auto py-2 lg:hidden snap-x snap-mandatory">
                     {domains.map((domain) => (
-                        <DomainButton key={domain.title} title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} onLearnMore={() => handleLearnMore(domain.title)} className='w-full h-[120px] rounded-[16px]' />
+                        <button
+                            key={domain.title}
+                            id={`domain-tab-${domain.title}`}
+                            type="button"
+                            role="tab"
+                            aria-selected={selectedDomain.title === domain.title}
+                            aria-controls="domain-mobile-panel"
+                            onClick={() => handleDomainClick(domain.title)}
+                            className={`min-h-11 shrink-0 snap-start rounded-full border px-4 text-sm font-semibold text-white transition-colors ${selectedDomain.title === domain.title ? 'border-[#55B6C8] bg-[#23768C]' : 'border-white/30 bg-white/10'}`}
+                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                        >
+                            {domain.title}
+                        </button>
                     ))}
                 </div>
                 <div className='hidden lg:flex flex-col gap-4 items-center justify-end'>
@@ -128,32 +144,6 @@ function Domain() {
                 </div>
 
             </div>
-            {isMobile && isPopupOpen && (
-                <div
-                    role="presentation"
-                    onClick={(event) => { if (event.target === event.currentTarget) setIsPopupOpen(false); }}
-                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-5 backdrop-blur-sm"
-                >
-                    <section
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="domain-dialog-title"
-                        onTouchStart={handlePopupTouchStart}
-                        onTouchEnd={handlePopupTouchEnd}
-                        className="relative max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-xl border border-white/20 bg-[#101820] p-5 text-white shadow-2xl"
-                    >
-                        <button type="button" aria-label="Close domain details" onClick={() => setIsPopupOpen(false)} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/40">
-                            <X size={18} />
-                        </button>
-                        <h2 id="domain-dialog-title" className="pr-12 text-xl font-bold" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.title}</h2>
-                        <div className="mx-auto mt-3 max-w-[280px]">
-                            <TransparentDomainImage src={selectedDomain.image} alt={selectedDomain.title} />
-                        </div>
-                        <p className="mt-3 text-sm font-semibold leading-6" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.summary}</p>
-                        <p className="mt-3 text-sm leading-6 text-white/80" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.description}</p>
-                    </section>
-                </div>
-            )}
         </div>
     )
 }

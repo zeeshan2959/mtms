@@ -76,7 +76,7 @@ export default function About() {
           className="mb-4 flex w-full max-w-[940px] justify-center flex-col items-center gap-6 rounded-[15px] md:mx-auto px-3 sm:gap-10 sm:px-[30px] 3xl:max-w-[967px] 3xl:px-[35px] py-4 sm:py-[20px]"
         >
           <Reveal scale={0.96} y={40} duration={1.1}>
-            <video src="about/mission.webm" autoPlay loop muted playsInline preload="auto" className="h-full w-full max-w-[520px]" />
+            <video src="/about/mission.webm" autoPlay loop muted playsInline preload="auto" className="h-full w-full max-w-[520px]" />
           </Reveal>
           <TextComponent text="To become a golbally trusted engineering partner by delivering innovative, high-quality and cost-effective solutions that help our cliens succeed in a competitive global market. We strive to maximise efficiency and value through strong technical expertise, collaborative partnerships and a commitment to consistent engineering excellence." />
         </div>
