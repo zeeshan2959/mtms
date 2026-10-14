@@ -3,7 +3,6 @@ import { useMediaQuery } from 'react-responsive';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { usePageShift } from '../../context/PageShiftContext';
-import hoverSound from '/clickedSound.wav';
 import imgHome from '/home.png';
 import imgCircleInfo from '/circle-info.png';
 import imgGlobe from '/globe.png';
@@ -27,35 +26,7 @@ export default function Sidebar() {
   const location = useLocation();
   const { setDirectionForPath } = usePageShift();
 
-  const audioRef = useRef(null);
   let collapseTimeout = useRef(null);
-
-  // ✅ Unlock audio on first user interaction
-  useEffect(() => {
-    audioRef.current = new Audio(hoverSound);
-
-    const unlockAudio = () => {
-      audioRef.current
-        .play()
-        .then(() => {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-        })
-        .catch(() => {});
-
-      window.removeEventListener('click', unlockAudio);
-    };
-
-    window.addEventListener('click', unlockAudio);
-
-    return () => window.removeEventListener('click', unlockAudio);
-  }, []);
-
-  const playSound = () => {
-    if (!audioRef.current) return;
-    audioRef.current.currentTime = 0;
-    audioRef.current.play().catch(() => {});
-  };
 
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const isTablet = useMediaQuery({ minWidth: 769, maxWidth: 1200 });
@@ -63,7 +34,7 @@ export default function Sidebar() {
   const isWeb = useMediaQuery({ minWidth: 1920 });
 
   if (isMobile) {
-    return <MobileSidebar playClickSound={playSound} />;
+    return <MobileSidebar />;
   }
 
   return (
@@ -110,7 +81,6 @@ export default function Sidebar() {
             onClick={() => setDirectionForPath(path)}
             onMouseEnter={() => {
               setHoveredPath(path);
-              playSound();
 
               // expand only when hovering home
               if (index === 0) {
@@ -195,7 +165,7 @@ export default function Sidebar() {
   );
 }
 
-function MobileSidebar({ playClickSound }) {
+function MobileSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { setDirectionForPath } = usePageShift();
@@ -240,7 +210,6 @@ function MobileSidebar({ playClickSound }) {
           <NavLink
             to="/contact"
             onClick={() => {
-              playClickSound();
               setDirectionForPath("/contact");
             }}
             className="mt-3 flex items-center justify-center rounded-full border border-white px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-white/10"

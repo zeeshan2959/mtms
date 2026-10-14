@@ -3,10 +3,12 @@ import { useMediaQuery } from 'react-responsive';
 import DomainButton from '../components/ui/DomainButton';
 import AnimatedText from '../components/ui/AnimatedText';
 import Reveal from '../components/ui/Reveal';
+import { playInteractionSound } from '../lib/interactionSound';
 
 function Domain() {
     const isWeb = useMediaQuery({ minWidth: 1920 });
     const [activeDomain, setActiveDomain] = useState('Automotive');
+    const domainTouchStart = useRef(null);
     const domains = [
         {
             title: 'Automotive',
@@ -52,10 +54,34 @@ function Domain() {
         },
     ]
     const selectedDomain = domains.find(domain => domain.title === activeDomain) ?? domains[0];
+    const selectedDomainIndex = domains.findIndex(domain => domain.title === selectedDomain.title);
 
     const handleDomainClick = (domain) => {
         setActiveDomain(domain);
     }
+
+    const handleLearnMore = (domain) => {
+        setActiveDomain(domain);
+    };
+
+    const handleDomainTouchStart = (event) => {
+        domainTouchStart.current = {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY,
+        };
+    };
+
+    const handleDomainTouchEnd = (event) => {
+        if (!domainTouchStart.current) return;
+        const deltaX = event.changedTouches[0].clientX - domainTouchStart.current.x;
+        const deltaY = event.changedTouches[0].clientY - domainTouchStart.current.y;
+        domainTouchStart.current = null;
+        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+        const nextIndex = Math.max(0, Math.min(domains.length - 1, selectedDomainIndex + (deltaX < 0 ? 1 : -1)));
+        if (nextIndex !== selectedDomainIndex) playInteractionSound();
+        setActiveDomain(domains[nextIndex].title);
+    };
 
     return (
         <div className='w-full flex flex-col justify-center items-center lg:flex-row'>
@@ -64,18 +90,32 @@ function Domain() {
                     <AnimatedText as="h1" text="Domains" split="chars" stagger={0.05} className="text-[32px] md:text-[44px] lg:text-[46px] xl:text-[56px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }} />
                     {/* <p className='text-white text-[18px]' style={{ fontFamily: 'Poppins, sans-serif' }}>Lorem ipsum dolor sit amet consectetur. Tellus blandit pellentesque duis eu at. Id sociis augue.</p> */}
                 </div>
-                <div className='grid grid-cols-2 gap-3 w-full lg:hidden'>
-                    {domains.map((domain) => (
-                        <DomainButton key={domain.title} title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} className='w-full h-[120px] rounded-[16px]' />
-                    ))}
+                <div id="domain-mobile-panel" role="tabpanel" aria-labelledby={`domain-tab-${selectedDomain.title}`} className="w-full lg:hidden" onTouchStart={handleDomainTouchStart} onTouchEnd={handleDomainTouchEnd}>
+                    <div className="mx-auto max-w-[420px]">
+                        <div className="mx-auto max-w-[280px]">
+                            <TransparentDomainImage src={selectedDomain.image} alt={selectedDomain.title} />
+                        </div>
+                        <h2 className="mt-2 text-xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.title}</h2>
+                        <p className="mt-2 text-sm font-semibold leading-6 text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.summary}</p>
+                        <p className="mt-2 text-sm leading-6 text-white/80" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.description}</p>
+                    </div>
                 </div>
-                <div className='w-full lg:hidden mt-5'>
-                    <Reveal key={selectedDomain.title} scale={0.94} y={30} duration={1.1}>
-                        <TransparentDomainImage src={selectedDomain.image} alt={selectedDomain.title} />
-                    </Reveal>
-                    <p className='mt-3 text-[14px] sm:text-[18px] font-bold text-center' style={{ fontFamily: 'Poppins, sans-serif' }}>
-                        {selectedDomain.summary}
-                    </p>
+                <div role="tablist" aria-label="Domains" className="flex w-full gap-2 overflow-x-auto py-2 lg:hidden snap-x snap-mandatory">
+                    {domains.map((domain) => (
+                        <button
+                            key={domain.title}
+                            id={`domain-tab-${domain.title}`}
+                            type="button"
+                            role="tab"
+                            aria-selected={selectedDomain.title === domain.title}
+                            aria-controls="domain-mobile-panel"
+                            onClick={() => handleDomainClick(domain.title)}
+                            className={`min-h-11 shrink-0 snap-start rounded-full border px-4 text-sm font-semibold text-white transition-colors ${selectedDomain.title === domain.title ? 'border-[#55B6C8] bg-[#23768C]' : 'border-white/30 bg-white/10'}`}
+                            style={{ fontFamily: 'Poppins, sans-serif' }}
+                        >
+                            {domain.title}
+                        </button>
+                    ))}
                 </div>
                 <div className='hidden lg:flex flex-col gap-4 items-center justify-end'>
                     <Reveal scale={0.94} y={30} duration={1.1}>
@@ -97,7 +137,7 @@ function Domain() {
                     <div className='hidden lg:grid grid-cols-2'>
                         {domains.map((domain, i) => (
                             <Reveal key={domain.title} y={26} blur={0} duration={0.7} delay={0.08 * i}>
-                                <DomainButton title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} />
+                                <DomainButton title={domain.title} buttonText={domain.buttonText} handleDomainClick={() => handleDomainClick(domain.title)} onLearnMore={() => handleLearnMore(domain.title)} />
                             </Reveal>
                         ))}
                     </div>
@@ -116,6 +156,8 @@ function TransparentDomainImage({ src, alt }) {
         if (!canvas) return undefined;
 
         const image = new Image();
+        image.fetchPriority = 'high';
+        image.decoding = 'async';
         image.src = src;
         image.onload = () => {
             const context = canvas.getContext('2d', { willReadFrequently: true });

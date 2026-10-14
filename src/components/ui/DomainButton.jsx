@@ -1,6 +1,7 @@
 import React from "react";
+import { playInteractionSound } from "../../lib/interactionSound";
 
-export default function DomainButton({ title, buttonText = "Learn more", handleDomainClick, className = "" }) {
+export default function DomainButton({ title, buttonText = "Learn more", handleDomainClick, onLearnMore, className = "" }) {
   return (
     <>
       <style>
@@ -57,7 +58,7 @@ export default function DomainButton({ title, buttonText = "Learn more", handleD
               group-hover:opacity-100 group-hover:translate-y-0
             "
           >
-            <button className="w-[180px] max-[767px]:w-[100px] max-[767px]:px-1 max-[767px]:py-1 max-[767px]:text-[10px] px-4 xl:px-12 xl:w-[230px] py-2 border border-white rounded-full" onClick={(event) => { event.stopPropagation(); handleDomainClick(); }}>
+            <button data-sound-handled="true" className="w-[180px] max-[767px]:w-[100px] max-[767px]:px-1 max-[767px]:py-1 max-[767px]:text-[10px] px-4 xl:px-12 xl:w-[230px] py-2 border border-white rounded-full" onClick={(event) => { event.stopPropagation(); playInteractionSound(); (onLearnMore ?? handleDomainClick)(); }}>
               {buttonText}
             </button>
           </div>
