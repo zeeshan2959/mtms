@@ -20,7 +20,7 @@ export default function Dashboard() {
         2xl:text-[88px] 
         font-bold 
         text-white 
-        font-daminga 
+        font-daminga
         leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]"
         style={{ fontSize: isWeb && '110px' }}
       />
