@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import DomainButton from '../components/ui/DomainButton';
 import AnimatedText from '../components/ui/AnimatedText';
 import Reveal from '../components/ui/Reveal';
@@ -64,6 +65,14 @@ function Domain() {
         setActiveDomain(domain);
     };
 
+    const changeDomain = (direction) => {
+        const nextIndex = Math.max(0, Math.min(domains.length - 1, selectedDomainIndex + direction));
+        if (nextIndex !== selectedDomainIndex) {
+            playInteractionSound();
+            setActiveDomain(domains[nextIndex].title);
+        }
+    };
+
     const handleDomainTouchStart = (event) => {
         domainTouchStart.current = {
             x: event.touches[0].clientX,
@@ -78,9 +87,7 @@ function Domain() {
         domainTouchStart.current = null;
         if (Math.abs(deltaX) < 50 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
 
-        const nextIndex = Math.max(0, Math.min(domains.length - 1, selectedDomainIndex + (deltaX < 0 ? 1 : -1)));
-        if (nextIndex !== selectedDomainIndex) playInteractionSound();
-        setActiveDomain(domains[nextIndex].title);
+        changeDomain(deltaX < 0 ? 1 : -1);
     };
 
     return (
@@ -90,32 +97,33 @@ function Domain() {
                     <AnimatedText as="h1" text="Domains" split="chars" stagger={0.05} className="text-[32px] md:text-[44px] lg:text-[46px] xl:text-[56px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]" style={{ fontSize: isWeb && '65px' }} />
                     {/* <p className='text-white text-[18px]' style={{ fontFamily: 'Poppins, sans-serif' }}>Lorem ipsum dolor sit amet consectetur. Tellus blandit pellentesque duis eu at. Id sociis augue.</p> */}
                 </div>
-                <div id="domain-mobile-panel" role="tabpanel" aria-labelledby={`domain-tab-${selectedDomain.title}`} className="w-full lg:hidden" onTouchStart={handleDomainTouchStart} onTouchEnd={handleDomainTouchEnd}>
+                <div id="domain-mobile-panel" aria-label="Selected domain details" className="w-full lg:hidden" onTouchStart={handleDomainTouchStart} onTouchEnd={handleDomainTouchEnd}>
                     <div className="mx-auto max-w-[420px]">
-                        <div className="mx-auto max-w-[280px]">
+                        <div className="relative mx-auto max-w-[280px]">
                             <TransparentDomainImage src={selectedDomain.image} alt={selectedDomain.title} />
+                            <button
+                                type="button"
+                                aria-label="Previous domain"
+                                onClick={() => changeDomain(-1)}
+                                disabled={selectedDomainIndex === 0}
+                                className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-[#060c18]/70 p-2 text-white shadow-lg transition-opacity disabled:opacity-40"
+                            >
+                                <ChevronLeft aria-hidden="true" />
+                            </button>
+                            <button
+                                type="button"
+                                aria-label="Next domain"
+                                onClick={() => changeDomain(1)}
+                                disabled={selectedDomainIndex === domains.length - 1}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-[#060c18]/70 p-2 text-white shadow-lg transition-opacity disabled:opacity-40"
+                            >
+                                <ChevronRight aria-hidden="true" />
+                            </button>
                         </div>
                         <h2 className="mt-2 text-xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.title}</h2>
                         <p className="mt-2 text-sm font-semibold leading-6 text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.summary}</p>
                         <p className="mt-2 text-sm leading-6 text-white/80" style={{ fontFamily: 'Poppins, sans-serif' }}>{selectedDomain.description}</p>
                     </div>
-                </div>
-                <div role="tablist" aria-label="Domains" className="flex w-full gap-2 overflow-x-auto py-2 lg:hidden snap-x snap-mandatory">
-                    {domains.map((domain) => (
-                        <button
-                            key={domain.title}
-                            id={`domain-tab-${domain.title}`}
-                            type="button"
-                            role="tab"
-                            aria-selected={selectedDomain.title === domain.title}
-                            aria-controls="domain-mobile-panel"
-                            onClick={() => handleDomainClick(domain.title)}
-                            className={`min-h-11 shrink-0 snap-start rounded-full border px-4 text-sm font-semibold text-white transition-colors ${selectedDomain.title === domain.title ? 'border-[#55B6C8] bg-[#23768C]' : 'border-white/30 bg-white/10'}`}
-                            style={{ fontFamily: 'Poppins, sans-serif' }}
-                        >
-                            {domain.title}
-                        </button>
-                    ))}
                 </div>
                 <div className='hidden lg:flex flex-col gap-4 items-center justify-end'>
                     <Reveal scale={0.94} y={30} duration={1.1}>
