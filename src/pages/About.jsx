@@ -91,18 +91,18 @@ export default function About() {
           <div className="pointer-events-none absolute -bottom-36 left-0 h-72 w-72 rounded-full bg-sky-500/[0.08] blur-[90px]" />
           <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
           <div className="relative grid items-center gap-5 md:grid-cols-[0.8fr_1.2fr] md:gap-10">
-            <Reveal scale={0.96} y={24} duration={0.9} className="relative mx-auto flex min-h-[220px] w-full max-w-[340px] items-center justify-center sm:min-h-[280px]">
+            <Reveal scale={0.96} y={24} duration={0.9} className="relative mx-auto flex min-h-[220px] w-full max-w-[420px] items-center justify-center sm:min-h-[280px]">
               <div className="pointer-events-none absolute inset-[12%] rounded-full bg-cyan-300/15 blur-3xl" />
               <picture className="relative block w-full">
-                <source srcSet="/about/mission.webp" type="image/webp" />
+                <source srcSet="/about/mission-vision.webp" type="image/webp" />
                 <img
-                  src="/about/mission.png"
-                  alt="Engineering team working with precision machinery"
-                  width="277"
-                  height="372"
+                  src="/about/mission-vision.png"
+                  alt="Detailed cutaway of a high-tech engineering system with a mission blueprint"
+                  width="1400"
+                  height="813"
                   fetchPriority="high"
                   decoding="async"
-                  className="mx-auto max-h-[280px] w-full object-contain drop-shadow-[0_22px_32px_rgba(0,0,0,0.38)] sm:max-h-[320px]"
+                  className="mx-auto max-h-[320px] w-full object-contain drop-shadow-[0_22px_32px_rgba(0,0,0,0.38)]"
                 />
               </picture>
             </Reveal>

@@ -382,14 +382,23 @@ export default function Sercices() {
             onClick={() => {
               if (!isMobile) setIsFlipped((flipped) => !flipped);
             }}
-            onTouchStart={() => {
-              if (isMobile) setIsFlipped(true);
+            onPointerDown={(event) => {
+              if (!isMobile || event.pointerType !== 'touch' || event.target.closest?.('button')) return;
+              setIsFlipped(true);
+              event.currentTarget.setPointerCapture(event.pointerId);
             }}
-            onTouchEnd={() => {
-              if (isMobile) setIsFlipped(false);
+            onPointerUp={(event) => {
+              if (isMobile && event.pointerType === 'touch' && !event.target.closest?.('button')) {
+                setIsFlipped(false);
+              }
             }}
-            onTouchCancel={() => {
-              if (isMobile) setIsFlipped(false);
+            onPointerCancel={(event) => {
+              if (!isMobile || event.pointerType !== 'touch') return;
+              setIsFlipped(false);
+            }}
+            onLostPointerCapture={(event) => {
+              if (!isMobile || event.pointerType !== 'touch') return;
+              setIsFlipped(false);
             }}
             onKeyDown={(event) => {
               if (event.target !== event.currentTarget) return;
@@ -411,6 +420,7 @@ export default function Sercices() {
               transformStyle: 'preserve-3d',
               transition: 'transform 0.65s cubic-bezier(0.4,0,0.2,1)',
               transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              touchAction: isMobile ? 'pan-y' : undefined,
               outline: 'none',
             }}
           >

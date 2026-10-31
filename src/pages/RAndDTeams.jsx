@@ -340,17 +340,32 @@ export default function RAndDTeams() {
         {/* ── Right panel: content card (544 × 511 px — exact Figma) ── */}
         <div
           className={`group order-2 ml-0 md:ml-[30px] lg:order-2 ${isMobile ? 'mt-3' : 'mt-6'} md:mt-0 transition-all duration-500 hover:-translate-y-1 hover:border-[#70d2e3]/45 hover:shadow-[0_32px_80px_rgba(0,0,0,0.44)]`}
-          onTouchStart={(event) => {
-            if (isMobile && !event.target.closest?.('button')) setIsFlipped(true);
+          onMouseEnter={() => {
+            if (!isMobile) setIsFlipped(true);
           }}
-          onTouchEnd={() => {
-            if (isMobile) setIsFlipped(false);
+          onMouseLeave={() => {
+            if (!isMobile) setIsFlipped(false);
           }}
-          onTouchCancel={() => {
-            if (isMobile) setIsFlipped(false);
+          onPointerDown={(event) => {
+            if (!isMobile || event.pointerType !== 'touch' || event.target.closest?.('button')) return;
+            setIsFlipped(true);
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerUp={(event) => {
+            if (isMobile && event.pointerType === 'touch' && !event.target.closest?.('button')) {
+              setIsFlipped(false);
+            }
+          }}
+          onPointerCancel={(event) => {
+            if (!isMobile || event.pointerType !== 'touch') return;
+            setIsFlipped(false);
+          }}
+          onLostPointerCapture={(event) => {
+            if (!isMobile || event.pointerType !== 'touch') return;
+            setIsFlipped(false);
           }}
           role="group"
-          aria-label={isMobile ? (isFlipped ? 'Release to return to overview' : 'Hold to view details') : undefined}
+          aria-label={isMobile ? (isFlipped ? 'Release to return to overview' : 'Hold to view details') : (isFlipped ? 'Showing details' : 'Hover to view details')}
           style={{
             width: isMobile ? '100%' : isTablet ? 444 : isDesktop ? 544 : isWeb ? 544 : 544,
             minHeight: isMobile ? 300 : isTablet ? 311 : isDesktop ? 411 : 511,
@@ -367,11 +382,24 @@ export default function RAndDTeams() {
             position: 'relative',
             overflow: isMobile ? 'visible' : 'hidden',
             isolation: isMobile ? 'auto' : 'isolate',
-            transformStyle: 'preserve-3d',
-            transform: isMobile ? (isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)') : undefined,
-            transition: 'transform 450ms cubic-bezier(0.22,1,0.36,1), box-shadow 450ms ease, border-color 450ms ease',
+            perspective: 1200,
+            touchAction: isMobile ? 'pan-y' : undefined,
+            transition: 'box-shadow 450ms ease, border-color 450ms ease',
           }}
         >
+          <div
+            style={{
+              position: 'relative',
+              zIndex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              width: '100%',
+              minHeight: isMobile ? 300 : isTablet ? 311 : isDesktop ? 411 : 511,
+              transformStyle: 'preserve-3d',
+              transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              transition: 'transform 450ms cubic-bezier(0.22,1,0.36,1)',
+            }}
+          >
           <div
             style={{
               position: 'relative',
@@ -382,8 +410,8 @@ export default function RAndDTeams() {
               overflow: isMobile ? 'hidden' : undefined,
               borderRadius: isMobile ? 24 : undefined,
               padding: isMobile ? '18px 18px 18px' : '26px 26px 22px',
-              backfaceVisibility: isMobile ? 'hidden' : undefined,
-              WebkitBackfaceVisibility: isMobile ? 'hidden' : undefined,
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
             }}
           >
           <div
@@ -575,27 +603,30 @@ export default function RAndDTeams() {
           </div>
 
           </div>
-          {isMobile && (
-            <div
-              aria-hidden="true"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                zIndex: 2,
-                transform: 'rotateY(180deg)',
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                borderRadius: 24,
-                border: '1px solid rgba(255,255,255,0.3)',
-                background: 'radial-gradient(ellipse at 100% 0%, rgba(85,182,200,0.24), transparent 45%), linear-gradient(140deg, rgba(18,42,58,0.98), rgba(7,18,32,0.98) 62%, rgba(20,68,87,0.96))',
-                padding: '42px 18px 20px',
-                overflowY: 'auto',
-                color: 'rgba(255,255,255,0.9)',
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 12,
-                lineHeight: 1.55,
-              }}
-            >
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 2,
+              transform: 'rotateY(180deg)',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              borderRadius: 24,
+              border: '1px solid rgba(255,255,255,0.3)',
+              background: 'radial-gradient(ellipse at 100% 0%, rgba(85,182,200,0.2), transparent 45%), linear-gradient(140deg, rgba(255,255,255,0.14), rgba(9,22,38,0.78) 54%, rgba(20,68,87,0.68))',
+              backdropFilter: 'blur(24px) saturate(150%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(150%)',
+              boxShadow: '0 22px 60px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(112,210,227,0.12)',
+              padding: isMobile ? '42px 18px 20px' : '26px 26px 22px',
+              overflowY: 'auto',
+              color: 'rgba(255,255,255,0.9)',
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: isMobile ? 12 : 14,
+              lineHeight: 1.55,
+            }}
+          >
+            {isMobile && (
               <span
                 style={{
                   position: 'absolute',
@@ -612,16 +643,17 @@ export default function RAndDTeams() {
               >
                 RELEASE TO RETURN
               </span>
-              <h2 style={{ margin: '0 0 14px', color: '#fff', fontSize: 16, lineHeight: 1.35 }}>
-                {active.subtitle}
-              </h2>
-              {active.description.split('\n\n').map((paragraph) => (
-                <p key={paragraph} style={{ margin: '0 0 12px' }}>
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          )}
+            )}
+            <h2 style={{ margin: '0 0 14px', color: '#fff', fontSize: isMobile ? 16 : 20, lineHeight: 1.35 }}>
+              {active.subtitle}
+            </h2>
+            {active.description.split('\n\n').map((paragraph) => (
+              <p key={paragraph} style={{ margin: '0 0 12px' }}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
+          </div>
         </div>
       </Reveal>
     </div>
