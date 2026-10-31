@@ -19,7 +19,7 @@ function Contact() {
         style={{ fontSize: isWide ? 72 : isWeb ? 65 : undefined }}
       />
       <div
-        className='flex flex-col md:flex-row gap-6 md:gap-10 pl-0 md:pl-20 md:min-w-[55%] md:justify-self-end justify-center md:justify-end text-white'
+        className='flex w-full min-w-0 flex-col items-stretch gap-6 text-white md:w-auto md:flex-row md:items-start md:gap-10 md:pl-20 md:min-w-[55%] md:justify-self-end md:justify-end'
         style={isWide ? {
           width: 'min(1100px, 100%)',
           minWidth: 0,
@@ -31,10 +31,10 @@ function Contact() {
           transformOrigin: 'center top',
         } : undefined}
       >
-        <Reveal x={-40} y={0} duration={1}>
+        <Reveal x={-40} y={0} duration={1} className="w-full min-w-0 md:w-auto">
           <ContactForm />
         </Reveal>
-        <Reveal x={40} y={0} delay={0.15} duration={1}>
+        <Reveal x={40} y={0} delay={0.15} duration={1} className="w-full min-w-0 md:w-auto">
           <Timers />
         </Reveal>
       </div>

@@ -200,7 +200,7 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
 
         {showTooltip && (
           <div
-            className="pointer-events-auto absolute left-3 top-3 z-20 max-w-[calc(100%-24px)]"
+            className="pointer-events-auto absolute left-1/2 top-1/2 z-20 max-w-[calc(100%-24px)] -translate-x-1/2 -translate-y-1/2"
             onMouseEnter={() => {
               clearHideTooltipTimer();
               setTooltipHovered(true);
@@ -228,7 +228,7 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
               aria-label="Previous country"
               disabled={selectedCountryIndex === 0}
               onClick={() => moveCountry(-1)}
-              className="rounded-full border border-white/20 bg-white/10 p-1.5 text-white disabled:opacity-30"
+              className="rounded-full border border-white/25 bg-[linear-gradient(145deg,rgba(255,255,255,0.16),rgba(9,20,35,0.42))] p-1.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-xl transition hover:border-[#70d2e3]/50 disabled:opacity-30"
             >
               <ChevronLeft size={17} />
             </button>
@@ -239,10 +239,10 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
                   type="button"
                   style={{ fontFamily: "Poppins, sans-serif" }}
                   onClick={() => handleSelectCountry(item.code)}
-                  className={`w-[92px] flex-none snap-center rounded-[7px] border border-white/20 px-2 py-1 font-poppins text-[10px] text-white shadow-[inset_0_0_18px_rgba(255,255,255,0.08)] ${
+                  className={`w-[92px] flex-none snap-center rounded-[10px] border px-2 py-1 font-poppins text-[10px] text-white shadow-[0_8px_20px_rgba(0,0,0,0.14),inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-xl transition ${
                     selectedCountry === item.code
-                      ? "bg-[rgba(221,221,221,0.35)] font-semibold"
-                      : "bg-[rgba(221,221,221,0.08)]"
+                      ? "border-[#70d2e3]/60 bg-[linear-gradient(145deg,rgba(85,182,200,0.42),rgba(17,66,85,0.68))] font-semibold"
+                      : "border-white/20 bg-[linear-gradient(145deg,rgba(255,255,255,0.12),rgba(9,20,35,0.34))]"
                   }`}
                 >
                   {item.name}
@@ -254,7 +254,7 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
               aria-label="Next country"
               disabled={selectedCountryIndex === countryList.length - 1}
               onClick={() => moveCountry(1)}
-              className="rounded-full border border-white/20 bg-white/10 p-1.5 text-white disabled:opacity-30"
+              className="rounded-full border border-white/25 bg-[linear-gradient(145deg,rgba(255,255,255,0.16),rgba(9,20,35,0.42))] p-1.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-xl transition hover:border-[#70d2e3]/50 disabled:opacity-30"
             >
               <ChevronRight size={17} />
             </button>
@@ -270,10 +270,10 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
                 scheduleHideTooltip();
               }
             }}
-            className={`w-[150px] flex-none snap-center md:w-[190px] rounded-[8px] border border-white/20 px-4 py-1.5 font-poppins transition text-[13px] md:text-[15px] xl:text-[18px] shadow-[inset_0_0_18px_rgba(255,255,255,0.08)] ${
+            className={`w-[150px] flex-none snap-center md:w-[190px] rounded-[12px] border px-4 py-1.5 font-poppins transition duration-300 text-[13px] md:text-[15px] xl:text-[18px] shadow-[0_10px_24px_rgba(0,0,0,0.16),inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-xl hover:-translate-y-0.5 ${
               selectedCountry === item.code
-                ? "bg-[rgba(221,221,221,0.35)] text-white font-semibold"
-                : "bg-[rgba(221,221,221,0.08)] text-white hover:bg-[rgba(221,221,221,0.22)]"
+                ? "border-[#70d2e3]/60 bg-[linear-gradient(145deg,rgba(85,182,200,0.42),rgba(17,66,85,0.68))] text-white font-semibold shadow-[0_0_20px_rgba(85,182,200,0.14),inset_0_1px_0_rgba(255,255,255,0.2)]"
+                : "border-white/20 bg-[linear-gradient(145deg,rgba(255,255,255,0.12),rgba(9,20,35,0.34))] text-white hover:border-[#70d2e3]/45 hover:bg-[linear-gradient(145deg,rgba(255,255,255,0.18),rgba(9,32,49,0.5))]"
             }`}
           >
             {item.name}

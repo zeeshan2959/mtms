@@ -1,70 +1,54 @@
-import React from "react";
-import { playInteractionSound } from "../../lib/interactionSound";
+import { ArrowUpRight } from "lucide-react";
 
-export default function DomainButton({ title, buttonText = "Learn more", handleDomainClick, onLearnMore, className = "" }) {
+export default function DomainButton({
+  title,
+  buttonText = "Learn more",
+  handleDomainClick,
+  onLearnMore,
+  isActive = false,
+  className = "",
+}) {
+  const handleClick = onLearnMore ?? handleDomainClick;
+
   return (
-    <>
-      <style>
-        {`
-          @keyframes upDownSettle {
-            0% { transform: translateY(0); }
-            40% { transform: translateY(-24px); }
-            70% { transform: translateY(-14px); }
-            100% { transform: translateY(-18px); }
-          }
+    <button
+      type="button"
+      aria-pressed={isActive}
+      onClick={handleClick}
+      className={`group relative flex h-[140px] w-[240px] flex-col justify-between overflow-hidden rounded-[24px] border p-5 text-left text-white shadow-[0_12px_35px_rgba(0,0,0,0.2)] transition-all duration-500 ease-out hover:-translate-y-1 hover:border-[#70d2e3]/70 hover:shadow-[0_18px_42px_rgba(0,0,0,0.34)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#70d2e3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#07111e] xl:h-[190px] xl:w-[260px] 2xl:h-[205px] 2xl:w-[280px] ${
+        isActive
+          ? "border-[#70d2e3]/65 bg-[linear-gradient(145deg,rgba(35,118,140,0.95),rgba(17,66,85,0.94))]"
+          : "border-white/15 bg-[linear-gradient(145deg,rgba(255,255,255,0.14),rgba(9,20,35,0.72))] backdrop-blur-xl hover:bg-[linear-gradient(145deg,rgba(35,118,140,0.68),rgba(9,32,49,0.92))]"
+      } ${className}`}
+    >
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none absolute -right-10 -top-12 h-32 w-32 rounded-full blur-3xl transition-opacity duration-500 ${
+          isActive ? "bg-[#8ce9f2]/25 opacity-100" : "bg-[#55b6c8]/20 opacity-0 group-hover:opacity-100"
+        }`}
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent"
+      />
 
-          .group:hover .content {
-            animation: upDownSettle 0.9s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-          }
-        `}
-      </style>
+      <span className="relative flex w-full items-start justify-between gap-3">
+        <span className="max-w-[190px] text-lg font-semibold leading-snug tracking-[-0.02em] sm:text-xl 2xl:text-[22px]" style={{ fontFamily: "Poppins, sans-serif" }}>
+          {title}
+        </span>
+        <ArrowUpRight
+          aria-hidden="true"
+          size={19}
+          className={`mt-0.5 shrink-0 text-white/65 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white ${
+            isActive ? "text-white" : ""
+          }`}
+        />
+      </span>
 
-      <div
-        className={`2xl:w-[349px] 2xl:h-[274px] xl:w-[280px] xl:h-[250px] w-[240px] h-[140px] rounded-[30px] overflow-hidden relative group cursor-pointer border border-[rgba(255,255,255,0.20)] ${className}`}
-        onClick={handleDomainClick}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') handleDomainClick();
-        }}
-      >
-        
-        {/* Background */}
-        <div className="absolute inset-0 bg-[rgba(221,221,221,0.20)] transition-all duration-700 ease-out group-hover:bg-[#23768C]"></div>
-
-        {/* Content Wrapper */}
-        <div className="content absolute inset-0 text-white will-change-transform">
-          
-          {/* TEXT (BOTTOM → TOP) */}
-          <div
-            className="
-              absolute left-1/2 bottom-8 max-[767px]:bottom-10 -translate-x-1/2
-              transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
-              group-hover:top-16 group-hover:bottom-auto group-hover:-translate-y-0
-            "
-          >
-            <h2 className="text-[14px] sm:text-[20px] 2xl:text-[27px] font-bold text-center" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              {title}
-            </h2>
-          </div>
-
-          {/* BUTTON (hidden → bottom) */}
-          <div
-            className="
-              absolute left-1/2 bottom-6 max-[767px]:bottom-2 -translate-x-1/2
-              opacity-0 translate-y-6
-              max-[767px]:opacity-100 max-[767px]:translate-y-0
-              transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]
-              group-hover:opacity-100 group-hover:translate-y-0
-            "
-          >
-            <button data-sound-handled="true" className="w-[180px] max-[767px]:w-[100px] max-[767px]:px-1 max-[767px]:py-1 max-[767px]:text-[10px] px-4 xl:px-12 xl:w-[230px] py-2 border border-white rounded-full" onClick={(event) => { event.stopPropagation(); playInteractionSound(); (onLearnMore ?? handleDomainClick)(); }}>
-              {buttonText}
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </>
+      <span className="relative inline-flex items-center gap-2 text-[12px] font-medium tracking-wide text-white/70 transition-colors duration-300 group-hover:text-white" style={{ fontFamily: "Poppins, sans-serif" }}>
+        <span>{buttonText}</span>
+        <span aria-hidden="true" className={`h-px w-5 transition-all duration-300 group-hover:w-9 ${isActive ? "bg-white/80" : "bg-[#70d2e3]/75"}`} />
+      </span>
+    </button>
   );
 }

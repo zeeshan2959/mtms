@@ -151,8 +151,9 @@ function playClickSound() {
 export default function Sercices() {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [tabStart, setTabStart] = useState(2);
   const cardRef = useRef(null);
+  const tabsRef = useRef(null);
+  const activeTabRef = useRef(null);
   const swipeStart = useRef(null);
   const suppressSwipeClickUntil = useRef(0);
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -171,9 +172,18 @@ export default function Sercices() {
     setIsFlipped(false);
   }, [activeIndex]);
 
+  useEffect(() => {
+    if (!isMobile || !tabsRef.current || !activeTabRef.current) return;
+    const tabs = tabsRef.current;
+    const activeTab = activeTabRef.current;
+    tabs.scrollTo({
+      left: activeTab.offsetLeft - (tabs.clientWidth - activeTab.clientWidth) / 2,
+      behavior: 'smooth',
+    });
+  }, [activeIndex, isMobile]);
+
   const selectService = (index) => {
     setActiveIndex(index);
-    setTabStart(Math.min(index - (index % 2), SERVICES.length - 2));
   };
 
   const goNext = useCallback(() => {
@@ -226,7 +236,7 @@ export default function Sercices() {
       }}
       style={{
         margin: isMobile ? 0 : '-24px -36px -40px',
-        paddingRight: isMobile ? '8px' : isWide ? 100 : '48px',
+        paddingRight: isMobile ? '8px' : '48px',
         minHeight: isMobile ? 'auto' : 'calc(100vh - 76px)',
         display: 'flex',
         flexDirection: 'column',
@@ -235,13 +245,13 @@ export default function Sercices() {
       className='px-2 sm:px-4 md:p-[40px 48px 48px 0]'
     >
       {/* ─── Services title block ─── */}
-      <div style={{ paddingLeft: isMobile ? 0 : isWeb ? '46%' : isDesktop ? '32%' : isTablet ? '26%' : '36%', marginBottom: isMobile ? 40 : 40 }}>
+      <div className="mx-auto mb-10 w-full max-w-[920px]">
         <AnimatedText
           as="h1"
           text="Services"
           split="chars"
           stagger={0.05}
-          className="mb-4 text-[32px] md:text-[44px] lg:text-[66px] xl:text-[66px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]"
+          className="mb-4 w-full text-left text-[32px] md:text-[44px] lg:text-[66px] xl:text-[66px] font-bold text-white font-daminga leading-[1.05] md:leading-[1.1] lg:leading-[1.2] xl:leading-[1.2]"
           style={{ fontSize: isWeb && '65px' }}
         />
         <Reveal
@@ -254,6 +264,8 @@ export default function Sercices() {
             color: 'rgba(255,255,255,0.60)',
             lineHeight: 1.7,
             maxWidth: 920,
+            margin: 0,
+            textAlign: 'left',
           }}
         >
           End-to-End engineering excellence — from concept design to validation and compliance.Our integrated approach ensures seamless development, precise release management, and uncompromised quality at every stage.
@@ -262,25 +274,27 @@ export default function Sercices() {
       </div>
 
       {/* ─── Moving Menu ─── */}
-      <Reveal className='px-0 sm:pl-32 flex flex-col lg:flex-row items-center lg:flex-start justify-end gap-0' y={48} delay={0.3} duration={1}>
+      <Reveal className="mx-auto w-full max-w-[920px] px-0 flex flex-col lg:flex-row items-center lg:flex-start justify-start gap-0 lg:translate-x-[10%]" y={48} delay={0.3} duration={1}>
         {/* ── Left panel: staircase tab list (414 × 556 px — exact Figma) ── */}
         <div
+          ref={tabsRef}
           className='order-1 block lg:order-1'
           style={{
             position: 'relative',
             width: isMobile ? '100%' : isTablet ? 414 : isDesktop ? 414 : isWeb ? 514 : 514,
             height: isMobile ? 'auto' : isTablet ? 411 : isDesktop ? 511 : 511,
             flexShrink: 0,
-            overflowX: 'hidden',
+            overflowX: isMobile ? 'auto' : 'hidden',
             overflowY: 'hidden',
             display: isMobile ? 'flex' : 'block',
-            gap: isMobile ? 8 : 0,
-            paddingBottom: isMobile ? 4 : 0,
-            marginBottom: isMobile ? 12 : 0,
+            gap: isMobile ? 10 : 0,
+            padding: isMobile ? '0 2px 6px' : 0,
+            marginBottom: isMobile ? 0 : 0,
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
           }}
         >
-          {(isMobile ? SERVICES.slice(tabStart, tabStart + 2) : SERVICES).map((svc, visibleIndex) => {
-            const i = isMobile ? tabStart + visibleIndex : visibleIndex;
+          {SERVICES.map((svc, i) => {
             const delta = i - activeIndex;
             const left = tabLeft(delta);
             // Figma exact top values reproduced:
@@ -294,17 +308,23 @@ export default function Sercices() {
             return (
               <button
                 key={i}
+                ref={i === activeIndex ? activeTabRef : null}
+                type="button"
+                aria-pressed={isActive}
                 onClick={() => selectService(i)}
                 style={{
                   position: isMobile ? 'relative' : 'absolute',
                   left: isMobile ? 0 : left,
                   top: isMobile ? 'auto' : top,
-                  width: isMobile ? 'calc(50% - 4px)' : isTablet ? 288 : isDesktop ? 288 : isWeb ? 388 : 388,
+                  width: isMobile ? 'min(72vw, 220px)' : isTablet ? 288 : isDesktop ? 288 : isWeb ? 388 : 388,
+                  minHeight: isMobile ? 48 : undefined,
                   flexShrink: isMobile ? 0 : undefined,
-                  background: isActive ? 'rgba(221,221,221,0.18)' : 'rgba(0,0,0,0)',
-                  border: `${isActive ? '1px solid rgba(255,255,255,0.25)' : '1px solid white'}`,
-                  borderRadius: 10,
-                  padding: isMobile ? '8px 16px' : '10px 30px',
+                  background: isActive
+                    ? 'linear-gradient(135deg, rgba(85,182,200,0.48), rgba(20,69,87,0.72) 58%, rgba(255,255,255,0.13))'
+                    : 'linear-gradient(135deg, rgba(255,255,255,0.13), rgba(9,20,35,0.38) 58%, rgba(35,118,140,0.16))',
+                  border: `${isActive ? '1px solid rgba(112,210,227,0.68)' : '1px solid rgba(255,255,255,0.28)'}`,
+                  borderRadius: 14,
+                  padding: isMobile ? '7px 10px' : '10px 30px',
                   color: '#ffffff',
                   fontFamily: 'Poppins, sans-serif',
                   fontWeight: 700,
@@ -316,50 +336,26 @@ export default function Sercices() {
                   cursor: 'pointer',
                   pointerEvents: 'auto',
                   marginBottom: 0,
+                  boxShadow: isActive
+                    ? '0 12px 30px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.24), 0 0 24px rgba(85,182,200,0.14)'
+                    : '0 8px 22px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.14)',
                   transition: [
                     'left 0.42s cubic-bezier(0.4,0,0.2,1)',
                     'top 0.42s cubic-bezier(0.4,0,0.2,1)',
                     'opacity 0.30s ease',
                     'background 0.25s ease',
                     'border-color 0.25s ease',
+                    'box-shadow 0.25s ease',
                   ].join(', '),
-                  backdropFilter: isActive ? 'blur(8px)' : 'none',
+                  backdropFilter: 'blur(18px) saturate(140%)',
+                  WebkitBackdropFilter: 'blur(18px) saturate(140%)',
                 }}
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#70d2e3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#07111e] hover:border-[#70d2e3]/70 hover:shadow-[0_14px_32px_rgba(0,0,0,0.28)]"
               >
                 {svc.name}
               </button>
             );
           })}
-          {isMobile && (
-            <>
-              <button
-                type="button"
-                data-sound-handled="true"
-                aria-label="Previous tabs"
-                disabled={tabStart === 0}
-                onClick={() => {
-                  playClickSound();
-                  setTabStart((start) => Math.max(start - 2, 0));
-                }}
-                className="absolute left-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/35 text-white disabled:opacity-30"
-              >
-                <ArrowLeft size={16} />
-              </button>
-              <button
-                type="button"
-                data-sound-handled="true"
-                aria-label="Next tabs"
-                disabled={tabStart + 2 >= SERVICES.length}
-                onClick={() => {
-                  playClickSound();
-                  setTabStart((start) => Math.min(start + 2, SERVICES.length - 2));
-                }}
-                className="absolute right-0 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-black/35 text-white disabled:opacity-30"
-              >
-                <ArrowRight size={16} />
-              </button>
-            </>
-          )}
         </div>
 
         {/* ── Right panel: content card (544 × 511 px — exact Figma) ── */}
@@ -367,26 +363,39 @@ export default function Sercices() {
           ref={cardRef}
           onMouseEnter={() => { if (!isMobile) setIsFlipped(true); }}
           onMouseLeave={() => { if (!isMobile) setIsFlipped(false); }}
-          onFocus={() => setIsFlipped(true)}
-          onBlur={() => setIsFlipped(false)}
+          onFocus={() => { if (!isMobile) setIsFlipped(true); }}
+          onBlur={() => { if (!isMobile) setIsFlipped(false); }}
           style={{
             width: isMobile ? '100%' : isTablet ? 444 : isDesktop ? 544 : isWeb ? 544 : 544,
-            minHeight: isMobile ? 300 : isTablet ? 311 : isDesktop ? 411 : 511,
+            minHeight: isMobile ? 370 : isTablet ? 311 : isDesktop ? 411 : 511,
             flexShrink: 0,
             position: 'relative',
             perspective: 1200,
           }}
-          className='order-2 ml-0 md:ml-[30px] lg:order-2 mt-6 md:mt-0'
+          className={`order-2 ml-0 md:ml-[30px] lg:order-2 ${isMobile ? 'mt-3' : 'mt-6'} md:mt-0`}
         >
           <div
             tabIndex={0}
             role="button"
-            aria-label={`${active.flipTitle ?? active.name.replace(/\s+/g, ' ')} details`}
-            onClick={() => setIsFlipped(true)}
+            aria-label={`${active.flipTitle ?? active.name.replace(/\s+/g, ' ')}. ${isFlipped ? 'Show overview' : 'Show details'}`}
+            aria-pressed={isFlipped}
+            onClick={() => {
+              if (!isMobile) setIsFlipped((flipped) => !flipped);
+            }}
+            onTouchStart={() => {
+              if (isMobile) setIsFlipped(true);
+            }}
+            onTouchEnd={() => {
+              if (isMobile) setIsFlipped(false);
+            }}
+            onTouchCancel={() => {
+              if (isMobile) setIsFlipped(false);
+            }}
             onKeyDown={(event) => {
+              if (event.target !== event.currentTarget) return;
               if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
-                setIsFlipped(true);
+                setIsFlipped((flipped) => !flipped);
               }
             }}
             style={{
@@ -411,14 +420,36 @@ export default function Sercices() {
                 inset: 0,
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
-                background: 'rgba(221,221,221,0.20)',
-                borderRadius: 18,
-                border: '1px solid rgba(221,221,221,0.20)',
-                padding: isMobile ? '20px 18px 104px' : '30px 34px 140px',
+                background: 'radial-gradient(ellipse at 100% 0%, rgba(85,182,200,0.2), transparent 42%), linear-gradient(140deg, rgba(255,255,255,0.17), rgba(11,24,40,0.76) 54%, rgba(23,66,82,0.58))',
+                backdropFilter: 'blur(24px) saturate(145%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(145%)',
+                borderRadius: 22,
+                border: '1px solid rgba(255,255,255,0.24)',
+                boxShadow: '0 22px 60px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.22)',
+                padding: isMobile ? '38px 14px 62px' : '30px 34px 140px',
                 display: 'flex',
                 flexDirection: 'column',
               }}
             >
+              {isMobile && (
+                <span
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    top: 14,
+                    right: 16,
+                    border: '1px solid rgba(112,210,227,0.42)',
+                    borderRadius: 999,
+                    padding: '4px 9px',
+                    color: 'rgba(190,246,250,0.9)',
+                    background: 'rgba(8,24,39,0.42)',
+                    font: '600 9px Poppins, sans-serif',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  TAP FOR DETAILS
+                </span>
+              )}
               {/* Title */}
               <p
                 style={{
@@ -428,13 +459,14 @@ export default function Sercices() {
                   color: '#ffffff',
                   lineHeight: 1.35,
                   marginBottom: 0,
+                  textShadow: '0 2px 18px rgba(0,0,0,0.28)',
                 }}
               >
                 {frontTitle}
               </p>
 
               {/* Divider */}
-              <div style={{ width: '100%', height: 1, background: 'rgba(255,255,255,0.10)', margin: isMobile ? '8px 0 14px' : '10px 0 20px' }} />
+              <div style={{ width: '100%', height: 1, background: 'linear-gradient(90deg, rgba(112,210,227,0.55), rgba(255,255,255,0.16) 58%, transparent)', margin: isMobile ? '8px 0 14px' : '10px 0 20px' }} />
               <p
                 style={{
                   margin: 0,
@@ -448,38 +480,99 @@ export default function Sercices() {
                 {frontDescription}
               </p>
 
+              <style>
+                {`
+                  @keyframes serviceFeatureLineSweep {
+                    from { transform: scaleX(0); opacity: 0.25; }
+                    to { transform: scaleX(1); opacity: 1; }
+                  }
+
+                  @keyframes serviceFeatureReveal {
+                    from { opacity: 0; transform: translateY(12px); }
+                    to { opacity: 1; transform: translateY(0); }
+                  }
+
+                  @keyframes serviceIconHalo {
+                    0%, 100% { opacity: 0.28; transform: scale(0.94); }
+                    50% { opacity: 0.72; transform: scale(1.08); }
+                  }
+
+                  @keyframes serviceIconFloat {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-2px); }
+                  }
+
+                  .service-feature-line {
+                    transform: scaleX(0);
+                    transform-origin: left center;
+                    animation: serviceFeatureLineSweep 900ms cubic-bezier(0.22, 1, 0.36, 1) 180ms forwards;
+                  }
+
+                  .service-feature-item {
+                    opacity: 0;
+                    animation: serviceFeatureReveal 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                  }
+
+                  .service-feature-icon {
+                    position: relative;
+                    isolation: isolate;
+                  }
+
+                  .service-feature-icon::after {
+                    content: "";
+                    position: absolute;
+                    inset: -5px;
+                    z-index: -1;
+                    border: 1px solid rgba(69, 231, 239, 0.55);
+                    border-radius: 9999px;
+                    animation: serviceIconHalo 3.2s ease-in-out infinite;
+                  }
+
+                  .service-feature-icon svg {
+                    animation: serviceIconFloat 2.8s ease-in-out infinite;
+                  }
+
+                  .service-feature-item:hover .service-feature-icon {
+                    box-shadow: 0 0 28px rgba(85, 182, 200, 0.32), inset 0 1px 0 rgba(255,255,255,0.24);
+                    transform: translateY(-3px) scale(1.04);
+                  }
+
+                  @media (prefers-reduced-motion: reduce) {
+                    .service-feature-line, .service-feature-item { animation: none; opacity: 1; transform: none; }
+                    .service-feature-icon, .service-feature-icon::after, .service-feature-icon svg { animation: none; transition: none !important; }
+                  }
+                `}
+              </style>
               <div
                 style={{
+                  position: 'relative',
                   display: 'grid',
                   gridTemplateColumns: `repeat(${frontItems.length}, minmax(0, 1fr))`,
-                  gap: isMobile ? 5 : 20,
+                  gap: isMobile ? 3 : 12,
                   alignItems: 'start',
-                  marginTop: isMobile ? 12 : 26,
-                  paddingBottom: isMobile ? 32 : 0,
+                  marginTop: isMobile ? 14 : 26,
+                  paddingBottom: isMobile ? 0 : 18,
                 }}
               >
+                <span
+                  aria-hidden="true"
+                  className="service-feature-line pointer-events-none absolute left-[12.5%] right-[12.5%] top-6 hidden h-px bg-gradient-to-r from-transparent via-[#70d2e3]/75 to-transparent md:block md:top-[30px]"
+                />
                 {frontItems.map((label, index) => (
                   <div
                     key={label}
-                    style={{
-                      position: 'relative',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      textAlign: 'center',
-                      color: '#ffffff',
-                    }}
+                    style={{ animationDelay: `${240 + index * 110}ms` }}
+                    className="service-feature-item relative z-[1] flex min-h-[82px] flex-col items-center text-center text-white md:min-h-[112px]"
                   >
-                    
-                    <ServiceFrontIcon type={frontIconTypes[index % frontIconTypes.length]} size={isMobile ? 46 : 66} />
                     <span
-                      style={{
-                        marginTop: 6,
-                        fontFamily: 'Poppins, sans-serif',
-                        fontSize: isMobile ? 7 : 10,
-                        lineHeight: 1.2,
-                        maxWidth: isMobile ? 74 : 118,
-                      }}
+                      className="service-feature-icon grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[radial-gradient(circle_at_35%_25%,rgba(255,255,255,0.18),rgba(8,24,39,0.94)_66%,rgba(22,79,96,0.9))] shadow-[0_8px_24px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.16)] transition-all duration-300 md:h-16 md:w-16"
+                      style={{ animationDelay: `${index * 180}ms` }}
+                    >
+                      <ServiceFrontIcon type={frontIconTypes[index % frontIconTypes.length]} size={isMobile ? 42 : 54} />
+                    </span>
+                    <span
+                      className="mt-2 flex min-h-[26px] max-w-[150px] items-start justify-center text-[8px] leading-[1.25] text-white/85 md:text-[10px]"
+                      style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                       {label}
                     </span>
@@ -495,15 +588,37 @@ export default function Sercices() {
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
                 transform: 'rotateY(180deg)',
-                background: 'rgba(221,221,221,0.20)',
-                borderRadius: 18,
-                border: '1px solid rgba(221,221,221,0.20)',
-                padding: isMobile ? '14px 18px 92px' : '18px 30px 104px',
+                background: 'radial-gradient(ellipse at 100% 0%, rgba(85,182,200,0.2), transparent 42%), linear-gradient(140deg, rgba(255,255,255,0.17), rgba(11,24,40,0.78) 54%, rgba(23,66,82,0.58))',
+                backdropFilter: 'blur(24px) saturate(145%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(145%)',
+                borderRadius: 22,
+                border: '1px solid rgba(255,255,255,0.24)',
+                boxShadow: '0 22px 60px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.22)',
+                padding: isMobile ? '38px 14px 62px' : '18px 30px 104px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
               }}
             >
+              {isMobile && (
+                <span
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    top: 14,
+                    right: 16,
+                    border: '1px solid rgba(112,210,227,0.42)',
+                    borderRadius: 999,
+                    padding: '4px 9px',
+                    color: 'rgba(190,246,250,0.9)',
+                    background: 'rgba(8,24,39,0.42)',
+                    font: '600 9px Poppins, sans-serif',
+                    letterSpacing: '0.08em',
+                  }}
+                >
+                  RELEASE TO RETURN
+                </span>
+              )}
               <div
                 style={{
                   width: '100%',
@@ -515,15 +630,19 @@ export default function Sercices() {
                 <h2
                   style={{
                     margin: 0,
-                    padding: '8px 16px',
-                    background: 'transparent',
-                    borderBottom: '1px solid rgba(69,231,239,0.45)',
-                    color: '#45E7EF',
+                    padding: isMobile ? '10px 12px' : '12px 16px',
+                    background: 'linear-gradient(110deg, rgba(85,182,200,0.18), rgba(255,255,255,0.06) 58%, rgba(255,255,255,0.02))',
+                    border: '1px solid rgba(255,255,255,0.16)',
+                    borderLeft: '3px solid rgba(85,182,200,0.9)',
+                    borderRadius: 10,
+                    color: '#ffffff',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12)',
                     fontFamily: 'Poppins, sans-serif',
                     fontSize: isMobile ? 16 : 18,
-                    fontWeight: 500,
-                    lineHeight: 1.15,
-                    textAlign: 'center',
+                    fontWeight: 600,
+                    lineHeight: 1.3,
+                    letterSpacing: '0.01em',
+                    textAlign: 'left',
                   }}
                 >
                   {active.flipTitle ?? active.name.replace(/\s+/g, ' ')}
@@ -560,17 +679,17 @@ export default function Sercices() {
               gap: 10,
               marginTop: 22,
               position: 'absolute',
-              left: isMobile ? 12 : 34,
-              right: isMobile ? 12 : 34,
-              bottom: isMobile ? 10 : 28,
+              left: isMobile ? 14 : 34,
+              right: isMobile ? 14 : 34,
+              bottom: isMobile ? 12 : 28,
               zIndex: 2,
             }}
           >
             {/* Counter */}
             <span
-              className='hidden md:block'
+              className={isMobile ? 'block md:hidden' : 'hidden md:block'}
               style={{
-                marginRight: 'auto',
+                marginRight: isMobile ? 0 : 'auto',
                 fontSize: 11,
                 color: 'rgba(255,255,255,0.35)',
                 fontFamily: 'Inter, sans-serif',
@@ -582,12 +701,12 @@ export default function Sercices() {
 
             {/* Previous ← */}
             <RoundBtn onClick={goPrev} disabled={!canPrev} label="Previous" compact={isMobile}>
-              <ArrowLeft size={20} />
+              <ArrowLeft size={isMobile ? 18 : 20} />
             </RoundBtn>
 
             {/* Next → */}
             <RoundBtn onClick={goNext} disabled={!canNext} label="Next" compact={isMobile}>
-              <ArrowRight size={20} />
+              <ArrowRight size={isMobile ? 18 : 20} />
             </RoundBtn>
           </div>
 
