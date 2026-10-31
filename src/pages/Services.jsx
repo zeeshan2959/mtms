@@ -152,6 +152,7 @@ export default function Sercices() {
   const [activeIndex, setActiveIndex] = useState(2);
   const [isFlipped, setIsFlipped] = useState(false);
   const cardRef = useRef(null);
+  const activeFlipPointerId = useRef(null);
   const tabsRef = useRef(null);
   const activeTabRef = useRef(null);
   const swipeStart = useRef(null);
@@ -384,20 +385,23 @@ export default function Sercices() {
             }}
             onPointerDown={(event) => {
               if (!isMobile || event.pointerType !== 'touch' || event.target.closest?.('button')) return;
-              setIsFlipped(true);
+              activeFlipPointerId.current = event.pointerId;
               event.currentTarget.setPointerCapture(event.pointerId);
+              setIsFlipped(true);
             }}
             onPointerUp={(event) => {
-              if (isMobile && event.pointerType === 'touch' && !event.target.closest?.('button')) {
-                setIsFlipped(false);
-              }
+              if (!isMobile || event.pointerType !== 'touch' || event.pointerId !== activeFlipPointerId.current) return;
+              activeFlipPointerId.current = null;
+              setIsFlipped(false);
             }}
             onPointerCancel={(event) => {
-              if (!isMobile || event.pointerType !== 'touch') return;
+              if (!isMobile || event.pointerType !== 'touch' || event.pointerId !== activeFlipPointerId.current) return;
+              activeFlipPointerId.current = null;
               setIsFlipped(false);
             }}
             onLostPointerCapture={(event) => {
-              if (!isMobile || event.pointerType !== 'touch') return;
+              if (!isMobile || event.pointerType !== 'touch' || event.pointerId !== activeFlipPointerId.current) return;
+              activeFlipPointerId.current = null;
               setIsFlipped(false);
             }}
             onKeyDown={(event) => {
@@ -420,7 +424,7 @@ export default function Sercices() {
               transformStyle: 'preserve-3d',
               transition: 'transform 0.65s cubic-bezier(0.4,0,0.2,1)',
               transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-              touchAction: isMobile ? 'pan-y' : undefined,
+              touchAction: isMobile ? 'none' : undefined,
               outline: 'none',
             }}
           >

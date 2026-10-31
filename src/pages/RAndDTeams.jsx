@@ -139,6 +139,7 @@ function playClickSound() {
 export default function RAndDTeams() {
   const [activeIndex, setActiveIndex] = useState(2); 
   const [isFlipped, setIsFlipped] = useState(false);
+  const activeFlipPointerId = useRef(null);
   const tabsRef = useRef(null);
   const activeTabRef = useRef(null);
   const swipeStart = useRef(null);
@@ -348,20 +349,23 @@ export default function RAndDTeams() {
           }}
           onPointerDown={(event) => {
             if (!isMobile || event.pointerType !== 'touch' || event.target.closest?.('button')) return;
-            setIsFlipped(true);
+            activeFlipPointerId.current = event.pointerId;
             event.currentTarget.setPointerCapture(event.pointerId);
+            setIsFlipped(true);
           }}
           onPointerUp={(event) => {
-            if (isMobile && event.pointerType === 'touch' && !event.target.closest?.('button')) {
-              setIsFlipped(false);
-            }
+            if (!isMobile || event.pointerType !== 'touch' || event.pointerId !== activeFlipPointerId.current) return;
+            activeFlipPointerId.current = null;
+            setIsFlipped(false);
           }}
           onPointerCancel={(event) => {
-            if (!isMobile || event.pointerType !== 'touch') return;
+            if (!isMobile || event.pointerType !== 'touch' || event.pointerId !== activeFlipPointerId.current) return;
+            activeFlipPointerId.current = null;
             setIsFlipped(false);
           }}
           onLostPointerCapture={(event) => {
-            if (!isMobile || event.pointerType !== 'touch') return;
+            if (!isMobile || event.pointerType !== 'touch' || event.pointerId !== activeFlipPointerId.current) return;
+            activeFlipPointerId.current = null;
             setIsFlipped(false);
           }}
           role="group"
@@ -383,7 +387,7 @@ export default function RAndDTeams() {
             overflow: isMobile ? 'visible' : 'hidden',
             isolation: isMobile ? 'auto' : 'isolate',
             perspective: 1200,
-            touchAction: isMobile ? 'pan-y' : undefined,
+            touchAction: isMobile ? 'none' : undefined,
             transition: 'box-shadow 450ms ease, border-color 450ms ease',
           }}
         >
