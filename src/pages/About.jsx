@@ -1,10 +1,145 @@
 import React, { useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import WorldMapSection from "../components/ui/WorldMap";
 import TextComponent from "../components/ui/TextComponent";
 import AnimatedText from "../components/ui/AnimatedText";
 import Reveal from "../components/ui/Reveal";
 import { playInteractionSound } from "../lib/interactionSound";
+
+const clientLogos = [
+  { name: "Alfa Romeo", src: "/about/clients/alfa-romeo.jpg" },
+  { name: "Alstom", src: "/about/clients/alstom-logo-png_-7266.png" },
+  { name: "Dodge", src: "/about/clients/dodge.jpg" },
+  { name: "Fiat", src: "/about/clients/fiat-logo-10.png" },
+  { name: "Iveco", src: "/about/clients/iveco_logo_black.svg" },
+  { name: "Jeep", src: "/about/clients/jeep-logo-png.png" },
+  { name: "Mole Urbana", src: "/about/clients/logo-Mole-Urbana.webp" },
+  { name: "Maserati", src: "/about/clients/Maserati-Logo.png" },
+  { name: "Peugeot", src: "/about/clients/peugeot.jpg" },
+  { name: "Simplast Group", src: "/about/clients/simplastGROUP.png" },
+  { name: "Stellantis", src: "/about/clients/stellantis-logo.svg" },
+  { name: "T.erre", src: "/about/clients/t.erre%20logo.png" },
+];
+
+function ClientsCarousel() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    duration: 60,
+    loop: true,
+    slidesToScroll: 1,
+  });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [snapCount, setSnapCount] = useState(0);
+
+  React.useEffect(() => {
+    if (!emblaApi) return;
+
+    const updateCarouselState = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+      setSnapCount(emblaApi.scrollSnapList().length);
+    };
+
+    updateCarouselState();
+    emblaApi.on("select", updateCarouselState);
+    emblaApi.on("reInit", updateCarouselState);
+
+    return () => {
+      emblaApi.off("select", updateCarouselState);
+      emblaApi.off("reInit", updateCarouselState);
+    };
+  }, [emblaApi]);
+
+  React.useEffect(() => {
+    if (!emblaApi || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const autoplayId = window.setInterval(() => {
+      if (document.visibilityState === "visible") emblaApi.scrollPrev();
+    }, 4000);
+
+    return () => window.clearInterval(autoplayId);
+  }, [emblaApi]);
+
+  return (
+    <section
+      role="tabpanel"
+      aria-label="Our clients"
+      className="group relative mb-4 w-full max-w-[1040px] overflow-hidden rounded-[24px] border border-white/20 bg-[linear-gradient(125deg,rgba(255,255,255,0.12),rgba(8,18,32,0.56)_48%,rgba(33,147,163,0.16))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-2xl backdrop-saturate-150 md:mx-auto md:p-8"
+    >
+      <div className="pointer-events-none absolute -right-16 -top-28 h-80 w-80 rounded-full bg-cyan-300/10 blur-[90px]" />
+      <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+      <div className="relative">
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#7bd0df]" style={{ fontFamily: "Poppins, sans-serif" }}>
+              Trusted partnerships
+            </p>
+            <h2 className="text-2xl font-bold leading-tight text-white sm:text-3xl" style={{ fontFamily: "Poppins, sans-serif" }}>
+              Our clients
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            <button
+              type="button"
+              onClick={() => emblaApi?.scrollPrev()}
+              aria-label="Previous client logos"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] text-white/85 transition hover:border-[#70d2e3]/60 hover:bg-[#23768C]/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#70d2e3]/60"
+            >
+              <ChevronLeft aria-hidden="true" size={20} />
+            </button>
+            <button
+              type="button"
+              onClick={() => emblaApi?.scrollNext()}
+              aria-label="Next client logos"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] text-white/85 transition hover:border-[#70d2e3]/60 hover:bg-[#23768C]/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#70d2e3]/60"
+            >
+              <ChevronRight aria-hidden="true" size={20} />
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="-ml-3 flex touch-pan-y sm:-ml-4">
+            {clientLogos.map((client) => (
+              <div
+                key={client.name}
+                className="min-w-0 flex-[0_0_50%] pl-3 sm:flex-[0_0_33.333%] sm:pl-4 lg:flex-[0_0_25%]"
+              >
+                <div className="flex h-28 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.06] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:h-32 sm:p-3">
+                  <div className="flex h-full w-full items-center justify-center rounded-xl bg-white px-3 py-2">
+                    <img
+                      src={client.src}
+                      alt={client.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-5 flex items-center justify-center gap-2" aria-label="Carousel pagination">
+          {Array.from({ length: snapCount }, (_, index) => (
+            <button
+              key={index}
+              type="button"
+              aria-label={`Go to logo group ${index + 1}`}
+              aria-current={index === selectedIndex ? "true" : undefined}
+              onClick={() => emblaApi?.scrollTo(index)}
+              className={`h-1.5 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#70d2e3]/60 ${
+                index === selectedIndex ? "w-6 bg-[#7bd0df]" : "w-1.5 bg-white/35 hover:bg-white/65"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function About() {
   const isWeb = useMediaQuery({ minWidth: 1920 });
@@ -128,9 +263,7 @@ export default function About() {
         </>
       )}
       {activeTab === "Clients" && (
-        <div className="text-center ">
-          Comming soon...
-        </div>
+        <ClientsCarousel />
       )}
       </div>
     </>
