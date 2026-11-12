@@ -1,13 +1,23 @@
-import React from 'react'
-import Timers from '../components/ui/Timer'
-import ContactForm from '../components/ui/ContactForm'
+import React, { useState } from 'react';
+import Timers from '../components/ui/Timer';
+import ContactForm from '../components/ui/ContactForm';
 import { useMediaQuery } from 'react-responsive';
 import AnimatedText from '../components/ui/AnimatedText';
 import Reveal from '../components/ui/Reveal';
 
+const LOCAL_TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+
 function Contact() {
   const isWeb = useMediaQuery({ minWidth: 1920 });
   const isWide = useMediaQuery({ minWidth: 1701 });
+
+  const [schedule, setSchedule] = useState({
+    viewDate: new Date(),
+    selectedDay: new Date().getDate(),
+    time: { hour: 12, min: 0, p: 'AM' },
+    timeZone: LOCAL_TIME_ZONE,
+  });
+
   return (
     <div className=''>
       <AnimatedText
@@ -32,14 +42,14 @@ function Contact() {
         } : undefined}
       >
         <Reveal x={-40} y={0} duration={1} className="w-full min-w-0 md:w-auto">
-          <ContactForm />
+          <ContactForm schedule={schedule} />
         </Reveal>
         <Reveal x={40} y={0} delay={0.15} duration={1} className="w-full min-w-0 md:w-auto">
-          <Timers />
+          <Timers schedule={schedule} setSchedule={setSchedule} />
         </Reveal>
       </div>
     </div>
-  )
+  );
 }
 
-export default Contact
+export default Contact;

@@ -1,10 +1,83 @@
-import React from 'react'
+import React, { useState } from 'react';
 
-function ContactForm() {
-    const handleSubmit = (e) => {
+function ContactForm({ schedule }) {
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState(null);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setStatus(null);
 
+        const formData = new FormData(e.target);
+        const fullName = formData.get('full_name')?.toString().trim();
+        const email = formData.get('email')?.toString().trim();
+        const termsAccepted = formData.get('terms') === 'on';
+
+        if (!fullName || !email) {
+            setStatus({ type: 'error', text: 'Please enter your full name and email address.' });
+            setLoading(false);
+            return;
+        }
+
+        if (!termsAccepted) {
+            setStatus({ type: 'error', text: 'Please agree to the terms and conditions.' });
+            setLoading(false);
+            return;
+        }
+
+        // Convert 12-hour picker time to 24-hour format
+        let hour24 = schedule.time.hour % 12;
+        if (schedule.time.p === 'PM') hour24 += 12;
+
+        const year = schedule.viewDate.getFullYear();
+        const month = String(schedule.viewDate.getMonth() + 1).padStart(2, '0');
+        const day = String(schedule.selectedDay).padStart(2, '0');
+        const hh = String(hour24).padStart(2, '0');
+        const mm = String(schedule.time.min).padStart(2, '0');
+
+        const startDateTime = `${year}-${month}-${day}T${hh}:${mm}:00`;
+
+        const payload = {
+            fullName,
+            number: formData.get('number')?.toString().trim() || '',
+            email,
+            companyName: formData.get('company_name')?.toString().trim() || '',
+            designation: formData.get('designation')?.toString().trim() || '',
+            message: formData.get('message')?.toString().trim() || '',
+            startDateTime,
+            timeZone: schedule.timeZone,
+        };
+
+        try {
+            const response = await fetch('/api/schedule-teams', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Unable to schedule Teams meeting.');
+            }
+
+            setStatus({
+                type: 'success',
+                text: 'Teams meeting scheduled! Check your email for the calendar invite.',
+                joinUrl: data.joinUrl,
+            });
+            e.target.reset();
+        } catch (err) {
+            setStatus({
+                type: 'error',
+                text: err.message || 'Something went wrong. Please try again.',
+            });
+        } finally {
+            setLoading(false);
+        }
     };
+
     return (
         <div className='2xl:min-w-[515px]'>
             <h1 className='text-[20px] xl:text-[24px] 2xl:text-[30px] font-bold text-white text-center mb-5' style={{ fontFamily: 'Daminga, sans-serif' }}>We will answer any questions</h1>
@@ -14,18 +87,49 @@ function ContactForm() {
             >
                 <span aria-hidden="true" className="pointer-events-none absolute inset-x-7 top-0 h-px bg-gradient-to-r from-transparent via-white/65 to-transparent" />
                 <span aria-hidden="true" className="pointer-events-none absolute -right-14 -top-20 -z-10 h-48 w-48 rounded-full bg-[#55B6C8]/20 blur-3xl" />
-                <input name="full_name" type="text" placeholder="Full Name" className='rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition placeholder:text-white/55 hover:border-white/25 focus:border-[#70d2e3]/65 focus:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20 2xl:px-[23px] 2xl:py-[12px] 2xl:text-base' style={{ fontFamily: 'Poppins, sans-serif' }} />
+                <input required name="full_name" type="text" placeholder="Full Name" className='rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition placeholder:text-white/55 hover:border-white/25 focus:border-[#70d2e3]/65 focus:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20 2xl:px-[23px] 2xl:py-[12px] 2xl:text-base' style={{ fontFamily: 'Poppins, sans-serif' }} />
                 <input name="number" type="text" placeholder="Number" className='rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition placeholder:text-white/55 hover:border-white/25 focus:border-[#70d2e3]/65 focus:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20 2xl:px-[23px] 2xl:py-[12px] 2xl:text-base' style={{ fontFamily: 'Poppins, sans-serif' }} />
-                <input name="email" type="email" placeholder="Email" className='rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition placeholder:text-white/55 hover:border-white/25 focus:border-[#70d2e3]/65 focus:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20 2xl:px-[23px] 2xl:py-[12px] 2xl:text-base' style={{ fontFamily: 'Poppins, sans-serif' }} />
+                <input required name="email" type="email" placeholder="Email" className='rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition placeholder:text-white/55 hover:border-white/25 focus:border-[#70d2e3]/65 focus:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20 2xl:px-[23px] 2xl:py-[12px] 2xl:text-base' style={{ fontFamily: 'Poppins, sans-serif' }} />
                 <input name="company_name" type="text" placeholder="Company Name" className='rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition placeholder:text-white/55 hover:border-white/25 focus:border-[#70d2e3]/65 focus:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20 2xl:px-[23px] 2xl:py-[12px] 2xl:text-base' style={{ fontFamily: 'Poppins, sans-serif' }} />
                 <input name="designation" type="text" placeholder="Designation" className='rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition placeholder:text-white/55 hover:border-white/25 focus:border-[#70d2e3]/65 focus:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20 2xl:px-[23px] 2xl:py-[12px] 2xl:text-base' style={{ fontFamily: 'Poppins, sans-serif' }} />
                 <textarea name="message" placeholder="Message" className='min-h-24 resize-y rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition placeholder:text-white/55 hover:border-white/25 focus:border-[#70d2e3]/65 focus:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20 2xl:px-[23px] 2xl:py-[12px] 2xl:text-base' style={{ fontFamily: 'Poppins, sans-serif' }} />
                 <input name="file" type="file" className='rounded-xl border border-white/15 bg-white/[0.08] px-4 py-2.5 text-sm font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl transition file:mr-3 file:rounded-lg file:border-0 file:bg-white/15 file:px-3 file:py-1 file:text-white hover:border-white/25 focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/20' style={{ fontFamily: 'Poppins, sans-serif' }} />
                 <div className='relative flex items-center gap-[14px]'>
-                    <input name="terms" type="checkbox" id="terms" className='w-[16px] h-[16px] rounded-[6px] text-base font-medium text-white' style={{ backgroundColor: 'rgba(255, 255, 255, 0)', fontFamily: 'Poppins, sans-serif' }} />
+                    <input required name="terms" type="checkbox" id="terms" className='w-[16px] h-[16px] rounded-[6px] text-base font-medium text-white' style={{ backgroundColor: 'rgba(255, 255, 255, 0)', fontFamily: 'Poppins, sans-serif' }} />
                     <label htmlFor="terms" className='text-sm font-medium text-white' style={{ fontFamily: 'Poppins, sans-serif' }}>I agree to the terms and conditions</label>
                 </div>
-                <button type="submit" className='relative mt-2 w-[180px] rounded-full border border-white/35 bg-[linear-gradient(120deg,rgba(85,182,200,0.4),rgba(17,66,85,0.64))] px-8 py-2 text-base font-semibold text-white shadow-[0_10px_28px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#70d2e3]/70 hover:shadow-[0_14px_32px_rgba(0,0,0,0.28),0_0_20px_rgba(85,182,200,0.16)] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/50' style={{ fontFamily: 'Poppins, sans-serif' }}>Submit</button>
+
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className='relative mt-2 w-[180px] rounded-full border border-white/35 bg-[linear-gradient(120deg,rgba(85,182,200,0.4),rgba(17,66,85,0.64))] px-8 py-2 text-base font-semibold text-white shadow-[0_10px_28px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#70d2e3]/70 hover:shadow-[0_14px_32px_rgba(0,0,0,0.28),0_0_20px_rgba(85,182,200,0.16)] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/50 disabled:cursor-not-allowed disabled:opacity-50'
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
+                    {loading ? 'Scheduling...' : 'Submit'}
+                </button>
+
+                {status && (
+                    <div
+                        className={`mt-1 rounded-xl border px-3.5 py-2.5 text-xs sm:text-sm ${
+                            status.type === 'success'
+                                ? 'border-[#70d2e3]/45 bg-[#55B6C8]/15 text-[#9ef0fa]'
+                                : 'border-red-400/45 bg-red-500/15 text-red-200'
+                        }`}
+                        style={{ fontFamily: 'Poppins, sans-serif' }}
+                    >
+                        <p>{status.text}</p>
+                        {status.joinUrl && (
+                            <a
+                                href={status.joinUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-1 inline-block font-semibold underline hover:text-white"
+                            >
+                                Join Teams Meeting Link →
+                            </a>
+                        )}
+                    </div>
+                )}
             </form>
         </div>
     );

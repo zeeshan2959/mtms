@@ -42,14 +42,14 @@ function Domain() {
         {
             title: 'Household Appliances',
             buttonText: 'Learn more',
-            image: '/domain/household.png',
+            image: '/domain/household.svg',
             description: 'Our expertise spans in comprehensive product design solutions for consumer appliances, including detailed design development, ergonomic and packaging studies, and compliance documentation. Our capabilities span component and system design, performance testing, and complete technical documentation to ensure functionality, safety, and manufacturability throughout the development lifecycle.',
             summary: 'Creating robust 3D models and user-oriented technical documentation for high-volume consumer products',
         },
         {
             title: 'IOT Devices',
             buttonText: 'Learn more',
-            image: '/domain/iot-devices.png',
+            image: '/domain/iot-devices-no-shadow.svg',
             description: 'Our expertise spans in comprehensive product design solutions for consumer appliances, including detailed design development, ergonomic and packaging studies, and compliance documentation. Our capabilities span component and system design, performance testing, and complete technical documentation to ensure functionality, safety, and manufacturability throughout the development lifecycle.',
             summary: 'We deliver robust engineering support for IoT hardware and smart device development, including detailed CAD design, integration studies, and regulatory compliance documentation. Our services span component design, connectivity and performance validation, system‑level integration, and comprehensive technical documentation across both prototyping and production stages.',
         },
@@ -166,8 +166,8 @@ function TransparentDomainImage({ src, alt }) {
         '/domain/turbine.png': [1400, 1334],
         '/domain/fridge.png': [1090, 1536],
         '/domain/industrial-machinery.png': [1376, 768],
-        '/domain/household.png': [1376, 768],
-        '/domain/iot-devices.png': [1376, 768],
+        '/domain/household.svg': [1376, 768],
+        '/domain/iot-devices-no-shadow.svg': [1376, 768],
     }[src];
 
     return (

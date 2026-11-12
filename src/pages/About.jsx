@@ -9,21 +9,23 @@ import Reveal from "../components/ui/Reveal";
 import { playInteractionSound } from "../lib/interactionSound";
 
 const clientLogos = [
-  { name: "Alfa Romeo", src: "/about/clients/alfa-romeo.jpg" },
-  { name: "Alstom", src: "/about/clients/alstom-logo-png_-7266.png" },
-  { name: "Dodge", src: "/about/clients/dodge.jpg" },
-  { name: "Fiat", src: "/about/clients/fiat-logo-10.png" },
-  { name: "Iveco", src: "/about/clients/iveco_logo_black.svg" },
-  { name: "Jeep", src: "/about/clients/jeep-logo-png.png" },
-  { name: "Mole Urbana", src: "/about/clients/logo-Mole-Urbana.webp" },
-  { name: "Maserati", src: "/about/clients/Maserati-Logo.png" },
-  { name: "Peugeot", src: "/about/clients/peugeot.jpg" },
-  { name: "Simplast Group", src: "/about/clients/simplastGROUP.png" },
-  { name: "Stellantis", src: "/about/clients/stellantis-logo.svg" },
-  { name: "T.erre", src: "/about/clients/t.erre%20logo.png" },
+  { name: "Stellantis", src: "/about/clients/stellantis-logo-png_seeklogo-395767.svg" },
+  { name: "Alstom", src: "/about/clients/alstom-logo-png_-7266.svg" },
+  { name: "Mole Urbana", src: "/about/clients/logo-Mole-Urbana.svg" },
+  { name: "T.ERRE", src: "/about/clients/t.erre%20logo.svg" },
+  { name: "NUOVA", src: "/about/clients/simplastGROUP.svg" },
+  { name: "IVECO", src: "/about/clients/Iveco_Logo_2023.svg.svg" },
+  // { name: "Deam", text: "Deam" },
+  { name: "Alfa Romeo", src: "/about/clients/alfa_romeo_black-logo_brandlogos.net_f3e8a.svg" },
+  { name: "Dodge", src: "/about/clients/Dodge_2022_logo.svg.svg" },
+  { name: "FIAT", src: "/about/clients/fiat-logo-10.svg" },
+  { name: "Jeep", src: "/about/clients/jeep-logo-png.svg" },
+  { name: "Maserati", src: "/about/clients/Maserati-Logo%20(1).svg" },
+  { name: "Peugeot", src: "/about/clients/Peugeot_2021_Logo.svg" },
 ];
 
 function ClientsCarousel() {
+  const isHoveringLogos = useRef(false);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     duration: 60,
@@ -55,8 +57,10 @@ function ClientsCarousel() {
     if (!emblaApi || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const autoplayId = window.setInterval(() => {
-      if (document.visibilityState === "visible") emblaApi.scrollPrev();
-    }, 4000);
+      if (document.visibilityState === "visible" && !isHoveringLogos.current) {
+        emblaApi.scrollNext();
+      }
+    }, 5000);
 
     return () => window.clearInterval(autoplayId);
   }, [emblaApi]);
@@ -65,10 +69,8 @@ function ClientsCarousel() {
     <section
       role="tabpanel"
       aria-label="Our clients"
-      className="group relative mb-4 w-full max-w-[1040px] overflow-hidden rounded-[24px] border border-white/20 bg-[linear-gradient(125deg,rgba(255,255,255,0.12),rgba(8,18,32,0.56)_48%,rgba(33,147,163,0.16))] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-2xl backdrop-saturate-150 md:mx-auto md:p-8"
+      className="group relative mb-4 w-full max-w-[1040px] p-5 md:mx-auto md:p-8"
     >
-      <div className="pointer-events-none absolute -right-16 -top-28 h-80 w-80 rounded-full bg-cyan-300/10 blur-[90px]" />
-      <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
       <div className="relative">
         <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -99,23 +101,46 @@ function ClientsCarousel() {
           </div>
         </div>
 
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="-ml-3 flex touch-pan-y sm:-ml-4">
+        <div
+          className="overflow-hidden"
+          ref={emblaRef}
+          onMouseEnter={() => {
+            isHoveringLogos.current = true;
+          }}
+          onMouseLeave={() => {
+            isHoveringLogos.current = false;
+          }}
+        >
+          <div className="-ml-3 flex touch-pan-y py-3 sm:-ml-4">
             {clientLogos.map((client) => (
               <div
                 key={client.name}
                 className="min-w-0 flex-[0_0_50%] pl-3 sm:flex-[0_0_33.333%] sm:pl-4 lg:flex-[0_0_25%]"
               >
-                <div className="flex h-28 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.06] p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:h-32 sm:p-3">
-                  <div className="flex h-full w-full items-center justify-center rounded-xl bg-white px-3 py-2">
+                <div className="flex h-28 items-center justify-center rounded-2xl border border-white/35 bg-[linear-gradient(145deg,rgba(255,255,255,0.24),rgba(255,255,255,0.08)_55%,rgba(125,211,252,0.12))] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_10px_28px_rgba(0,0,0,0.22)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[#70d2e3]/70 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_16px_34px_rgba(0,0,0,0.28)] sm:h-32 sm:p-5">
+                  {client.src ? (
                     <img
                       src={client.src}
                       alt={client.name}
                       loading="lazy"
                       decoding="async"
-                      className="max-h-full max-w-full object-contain"
+                      className={`h-full w-full object-contain ${
+                        client.name === "Maserati"
+                          ? "scale-150"
+                          : client.name === "Stellantis"
+                            ? "scale-[2]"
+                            : ""
+                      }`}
                     />
-                  </div>
+                  ) : (
+                    <span
+                      aria-label={client.name}
+                      className="text-2xl font-bold tracking-[0.12em] text-slate-900 sm:text-3xl"
+                      style={{ fontFamily: "Poppins, sans-serif" }}
+                    >
+                      {client.text}
+                    </span>
+                  )}
                 </div>
               </div>
             ))}

@@ -425,6 +425,9 @@ export default function Sercices() {
               transition: 'transform 0.65s cubic-bezier(0.4,0,0.2,1)',
               transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
               touchAction: isMobile ? 'none' : undefined,
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              WebkitTouchCallout: 'none',
               outline: 'none',
             }}
           >
