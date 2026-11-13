@@ -269,7 +269,7 @@ export default function Sercices() {
             textAlign: 'left',
           }}
         >
-          End-to-End engineering excellence — from concept design to validation and compliance.Our integrated approach ensures seamless development, precise release management, and uncompromised quality at every stage.
+          End-to-End engineering excellence — from concept design to validation and compliance. Our integrated approach ensures seamless development, precise release management, and uncompromised quality at every stage.
 
         </Reveal>
       </div>
