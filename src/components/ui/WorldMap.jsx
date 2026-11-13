@@ -1,4 +1,10 @@
-import React, { useLayoutEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMediaQuery } from "react-responsive";
 
@@ -13,19 +19,23 @@ const SUPPORTED_CODES = new Set(Object.keys(TIMEZONE_COUNTRY_CODES));
 
 export default function WorldMapWithList({ showTimezoneTooltip = false }) {
   const chartRef = useRef(null);
+  const tooltipRef = useRef(null);
   const polygonSeriesRef = useRef(null);
   const hideTooltipTimerRef = useRef(null);
   const tooltipHoveredRef = useRef(false);
+  const tooltipPinnedRef = useRef(false);
   const showTimezoneTooltipRef = useRef(showTimezoneTooltip);
   const [selectedCountry, setSelectedCountry] = useState("IT");
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [tooltipHovered, setTooltipHovered] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [tooltipPinned, setTooltipPinned] = useState(false);
   const [selectedZoneByCountry, setSelectedZoneByCountry] = useState({});
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   showTimezoneTooltipRef.current = showTimezoneTooltip;
   tooltipHoveredRef.current = tooltipHovered;
+  tooltipPinnedRef.current = tooltipPinned;
 
   const countryList = [
     { code: "IT", name: "Italy" },
@@ -44,6 +54,7 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
   }, []);
 
   const scheduleHideTooltip = useCallback(() => {
+    if (tooltipPinnedRef.current) return;
     clearHideTooltipTimer();
     hideTooltipTimerRef.current = window.setTimeout(() => {
       setHoveredCountry(null);
@@ -52,14 +63,35 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
   }, [clearHideTooltipTimer]);
 
   const showCountryTooltip = useCallback(
-    (code) => {
+    (code, pin = false) => {
       if (!showTimezoneTooltipRef.current || !SUPPORTED_CODES.has(code)) return;
+      if (tooltipPinnedRef.current && !pin) return;
       clearHideTooltipTimer();
       setHoveredCountry(code);
       setTooltipOpen(true);
+      if (pin) setTooltipPinned(true);
     },
     [clearHideTooltipTimer]
   );
+
+  useEffect(() => {
+    if (!showTimezoneTooltip) return;
+
+    const dismissOnOutsideClick = (event) => {
+      if (tooltipRef.current?.contains(event.target)) return;
+      clearHideTooltipTimer();
+      tooltipPinnedRef.current = false;
+      setTooltipPinned(false);
+      setTooltipHovered(false);
+      setHoveredCountry(null);
+      setTooltipOpen(false);
+    };
+
+    document.addEventListener("pointerdown", dismissOnOutsideClick);
+    return () => {
+      document.removeEventListener("pointerdown", dismissOnOutsideClick);
+    };
+  }, [showTimezoneTooltip, clearHideTooltipTimer]);
 
   useLayoutEffect(() => {
     let root = am5.Root.new(chartRef.current);
@@ -110,7 +142,7 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
 
     polygonSeries.mapPolygons.template.events.on("pointerover", (ev) => {
       const id = ev.target.dataItem.get("id");
-      showCountryTooltip(id);
+      showCountryTooltip(id, true);
     });
 
     polygonSeries.mapPolygons.template.events.on("pointerout", () => {
@@ -159,7 +191,7 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
 
       dataItem.get("mapPolygon").set("active", true);
       setSelectedCountry(code);
-      showCountryTooltip(code);
+      showCountryTooltip(code, true);
     }
   };
 
@@ -200,6 +232,7 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
 
         {showTooltip && (
           <div
+            ref={tooltipRef}
             className="pointer-events-auto absolute left-1/2 top-1/2 z-20 max-w-[calc(100%-24px)] -translate-x-1/2 -translate-y-1/2"
             onMouseEnter={() => {
               clearHideTooltipTimer();
