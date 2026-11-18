@@ -1,4 +1,5 @@
-import { createContext, useContext, useRef } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 const DEFAULT_PATTERN = {
@@ -29,18 +30,20 @@ function patternForNavCount(navCount) {
 
 export function PageTransitionDirectionProvider({ children }) {
   const location = useLocation();
+  const [pattern, setPattern] = useState(WAVE_PATTERNS[0]);
   const prevPathRef = useRef(location.pathname);
   const navCountRef = useRef(0);
-  const patternRef = useRef(WAVE_PATTERNS[0]);
 
-  if (location.pathname !== prevPathRef.current) {
-    navCountRef.current += 1;
-    patternRef.current = patternForNavCount(navCountRef.current);
-    prevPathRef.current = location.pathname;
-  }
+  useEffect(() => {
+    if (location.pathname !== prevPathRef.current) {
+      prevPathRef.current = location.pathname;
+      navCountRef.current += 1;
+      setPattern(patternForNavCount(navCountRef.current));
+    }
+  }, [location.pathname]);
 
   return (
-    <PageTransitionDirectionContext.Provider value={patternRef.current}>
+    <PageTransitionDirectionContext.Provider value={pattern}>
       {children}
     </PageTransitionDirectionContext.Provider>
   );

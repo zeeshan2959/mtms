@@ -25,7 +25,6 @@ function wavePhaseDelay(x, y, patternId, cssW, cssH) {
   const cx = cssW / 2;
   const cy = cssH / 2;
   const dist = Math.hypot(x - cx, y - cy);
-  const maxDist = Math.hypot(cx, cy) || 1;
   const angle = Math.atan2(y - cy, x - cx);
 
   switch (patternId) {
@@ -89,7 +88,6 @@ function burstBoost(x, y, patternId, cssW, cssH, progress) {
 export default function AnimatedBackground({ className = "", style }) {
   const wavePattern = usePageTransitionDirection();
   const patternRef = useRef(wavePattern);
-  patternRef.current = wavePattern;
 
   const burstStartRef = useRef(null);
   const prevPatternIdRef = useRef(wavePattern.id);
@@ -100,14 +98,18 @@ export default function AnimatedBackground({ className = "", style }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    patternRef.current = wavePattern;
     if (wavePattern.id !== prevPatternIdRef.current) {
       prevPatternIdRef.current = wavePattern.id;
       burstStartRef.current = performance.now();
-      setBlobPulse(true);
-      const timer = setTimeout(() => setBlobPulse(false), 700);
-      return () => clearTimeout(timer);
+      const pulseOn = setTimeout(() => setBlobPulse(true), 0);
+      const pulseOff = setTimeout(() => setBlobPulse(false), 700);
+      return () => {
+        clearTimeout(pulseOn);
+        clearTimeout(pulseOff);
+      };
     }
-  }, [wavePattern.id]);
+  }, [wavePattern]);
 
   const blob = wavePattern.blob ?? { top: "42%", left: "-6%", size: "40vw" };
 
