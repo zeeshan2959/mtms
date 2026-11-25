@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function ContactForm({ schedule }) {
+function ContactForm() {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
 
@@ -26,56 +26,12 @@ function ContactForm({ schedule }) {
             return;
         }
 
-        // Convert 12-hour picker time to 24-hour format
-        let hour24 = schedule.time.hour % 12;
-        if (schedule.time.p === 'PM') hour24 += 12;
-
-        const year = schedule.viewDate.getFullYear();
-        const month = String(schedule.viewDate.getMonth() + 1).padStart(2, '0');
-        const day = String(schedule.selectedDay).padStart(2, '0');
-        const hh = String(hour24).padStart(2, '0');
-        const mm = String(schedule.time.min).padStart(2, '0');
-
-        const startDateTime = `${year}-${month}-${day}T${hh}:${mm}:00`;
-
-        const payload = {
-            fullName,
-            number: formData.get('number')?.toString().trim() || '',
-            email,
-            companyName: formData.get('company_name')?.toString().trim() || '',
-            designation: formData.get('designation')?.toString().trim() || '',
-            message: formData.get('message')?.toString().trim() || '',
-            startDateTime,
-            timeZone: schedule.timeZone,
-        };
-
-        try {
-            const response = await fetch('/api/schedule-teams', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Unable to schedule Teams meeting.');
-            }
-
-            setStatus({
-                type: 'success',
-                text: 'Teams meeting scheduled! Check your email for the calendar invite.',
-                joinUrl: data.joinUrl,
-            });
-            e.target.reset();
-        } catch (err) {
-            setStatus({
-                type: 'error',
-                text: err.message || 'Something went wrong. Please try again.',
-            });
-        } finally {
-            setLoading(false);
-        }
+        setStatus({
+            type: 'success',
+            text: 'Thanks for reaching out. Pick a time in the scheduler to book a meeting with MTMS Engineering.',
+        });
+        e.target.reset();
+        setLoading(false);
     };
 
     return (
@@ -105,7 +61,7 @@ function ContactForm({ schedule }) {
                     className='relative mt-2 w-[180px] rounded-full border border-white/35 bg-[linear-gradient(120deg,rgba(85,182,200,0.4),rgba(17,66,85,0.64))] px-8 py-2 text-base font-semibold text-white shadow-[0_10px_28px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-[#70d2e3]/70 hover:shadow-[0_14px_32px_rgba(0,0,0,0.28),0_0_20px_rgba(85,182,200,0.16)] focus:outline-none focus:ring-2 focus:ring-[#70d2e3]/50 disabled:cursor-not-allowed disabled:opacity-50'
                     style={{ fontFamily: 'Poppins, sans-serif' }}
                 >
-                    {loading ? 'Scheduling...' : 'Submit'}
+                    {loading ? 'Sending...' : 'Submit'}
                 </button>
 
                 {status && (
@@ -118,16 +74,6 @@ function ContactForm({ schedule }) {
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                     >
                         <p>{status.text}</p>
-                        {status.joinUrl && (
-                            <a
-                                href={status.joinUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="mt-1 inline-block font-semibold underline hover:text-white"
-                            >
-                                Join Teams Meeting Link →
-                            </a>
-                        )}
                     </div>
                 )}
             </form>

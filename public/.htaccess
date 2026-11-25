@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  Options -MultiViews -Indexes
+
+  RewriteRule ^index\.html$ - [L]
+
+  # These React routes share names with asset folders in /public.
+  # Without this, Apache serves the directory and returns 403 on reload.
+  RewriteRule ^(about|domain)/?$ /index.html [L]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
