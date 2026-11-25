@@ -83,10 +83,15 @@ export default function LoadingScreen({ isReady, onComplete }) {
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
   const [logoOpacity, setLogoOpacity] = useState(1);
-  const prevStageRef = useRef(0);
+  const [stageKey, setStageKey] = useState(() => getLogoForProgress(0));
   const intervalRef = useRef(null);
 
   const currentStage = getLogoForProgress(progress);
+
+  if (currentStage !== stageKey) {
+    setStageKey(currentStage);
+    setLogoOpacity(0);
+  }
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -111,36 +116,11 @@ export default function LoadingScreen({ isReady, onComplete }) {
     return () => clearInterval(intervalRef.current);
   }, [isReady]);
 
-  // When video becomes ready and progress is stalled at 80, resume
   useEffect(() => {
-    if (isReady && progress >= 80 && progress < 100) {
-      // Kick the interval by clearing and restarting
-      clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(intervalRef.current);
-            setTimeout(() => setDone(true), 400);
-            return 100;
-          }
-          const milestones = [100];
-          const nearMilestone = milestones.some((m) => prev < m && prev + 1.2 >= m);
-          return nearMilestone ? prev + 0.3 : prev + 0.8;
-        });
-      }, 30);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, [isReady]);
-
-  // Flash logo on stage change
-  useEffect(() => {
-    const stageIdx = LOGO_STAGES.indexOf(currentStage);
-    if (stageIdx !== prevStageRef.current) {
-      prevStageRef.current = stageIdx;
-      setLogoOpacity(0);
-      setTimeout(() => setLogoOpacity(1), 80);
-    }
-  }, [currentStage]);
+    if (logoOpacity !== 0) return undefined;
+    const timeout = window.setTimeout(() => setLogoOpacity(1), 80);
+    return () => window.clearTimeout(timeout);
+  }, [logoOpacity]);
 
   const pctDisplay = Math.round(progress);
 

@@ -167,11 +167,6 @@ export default function Sercices() {
     maxWidth: 1919,
   });
   const isWeb = useMediaQuery({ minWidth: 1920 });
-  const isWide = useMediaQuery({ minWidth: 1701 });
-
-  useEffect(() => {
-    setIsFlipped(false);
-  }, [activeIndex]);
 
   useEffect(() => {
     if (!isMobile || !tabsRef.current || !activeTabRef.current) return;
@@ -185,6 +180,7 @@ export default function Sercices() {
 
   const selectService = (index) => {
     setActiveIndex(index);
+    setIsFlipped(false);
   };
 
   const goNext = useCallback(() => {
@@ -835,12 +831,6 @@ function ServiceFrontIcon({ type, size = 77 }) {
         <path d="M29 33L38.5 28L48 33L38.5 38L29 33Z" {...iconProps} />
         <path d="M29 33V45L38.5 50M48 33V45L38.5 50M38.5 38V50" {...iconProps} />
         <path d="M27 48L23 52M50 48L54 52" {...iconProps} />
-      </>
-    ),
-    'cad-import': (
-      <>
-        <path d="M29 27H43L50 34V52H29V27Z" {...iconProps} />
-        <path d="M43 27V34H50M38.5 37V49M33.5 44L38.5 49L43.5 44" {...iconProps} />
       </>
     ),
     'oem-coordination': (

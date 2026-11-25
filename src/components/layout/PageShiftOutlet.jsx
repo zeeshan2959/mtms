@@ -40,11 +40,10 @@ export default function PageShiftOutlet() {
   const incomingRef = useRef(null);
   const outgoingRef = useRef(null);
 
-  useLayoutEffect(() => {
-    if (requestedPath === currentPath) return;
+  if (requestedPath !== currentPath) {
     setOutgoingPath(currentPath);
     setCurrentPath(requestedPath);
-  }, [requestedPath, currentPath]);
+  }
 
   useLayoutEffect(() => {
     const scroller = document.getElementById(SCROLLER_ID);
@@ -58,20 +57,24 @@ export default function PageShiftOutlet() {
     const incoming = incomingRef.current;
     const leaving = outgoingRef.current;
     if (!incoming) {
-      setOutgoingPath(null);
-      setLocked(false);
-      return undefined;
+      const id = window.setTimeout(() => {
+        setOutgoingPath(null);
+        setLocked(false);
+      }, 0);
+      return () => window.clearTimeout(id);
     }
 
     setLocked(true);
     scroller?.classList.add("is-page-shifting");
 
     if (prefersReducedMotion()) {
-      setOutgoingPath(null);
-      setLocked(false);
-      scroller?.classList.remove("is-page-shifting");
-      ScrollTrigger.refresh();
-      return undefined;
+      const id = window.setTimeout(() => {
+        setOutgoingPath(null);
+        setLocked(false);
+        scroller?.classList.remove("is-page-shifting");
+        ScrollTrigger.refresh();
+      }, 0);
+      return () => window.clearTimeout(id);
     }
 
     const incomingFrom = direction > 0 ? 100 : -100;

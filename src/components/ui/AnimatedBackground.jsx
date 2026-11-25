@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePageTransitionDirection } from "../../context/PageTransitionDirectionContext";
 import pattern from '/triangle.svg';
 
@@ -25,7 +25,6 @@ function wavePhaseDelay(x, y, patternId, cssW, cssH) {
   const cx = cssW / 2;
   const cy = cssH / 2;
   const dist = Math.hypot(x - cx, y - cy);
-  const maxDist = Math.hypot(cx, cy) || 1;
   const angle = Math.atan2(y - cy, x - cx);
 
   switch (patternId) {
@@ -89,25 +88,36 @@ function burstBoost(x, y, patternId, cssW, cssH, progress) {
 export default function AnimatedBackground({ className = "", style }) {
   const wavePattern = usePageTransitionDirection();
   const patternRef = useRef(wavePattern);
-  patternRef.current = wavePattern;
+
+  useLayoutEffect(() => {
+    patternRef.current = wavePattern;
+  }, [wavePattern]);
 
   const burstStartRef = useRef(null);
   const prevPatternIdRef = useRef(wavePattern.id);
   const [blobPulse, setBlobPulse] = useState(false);
+  const [pulsePatternId, setPulsePatternId] = useState(wavePattern.id);
 
   const baseCanvasRef = useRef(null);
   const waveCanvasRef = useRef(null);
   const containerRef = useRef(null);
 
-  useEffect(() => {
-    if (wavePattern.id !== prevPatternIdRef.current) {
-      prevPatternIdRef.current = wavePattern.id;
-      burstStartRef.current = performance.now();
-      setBlobPulse(true);
-      const timer = setTimeout(() => setBlobPulse(false), 700);
-      return () => clearTimeout(timer);
-    }
+  if (wavePattern.id !== pulsePatternId) {
+    setPulsePatternId(wavePattern.id);
+    setBlobPulse(true);
+  }
+
+  useLayoutEffect(() => {
+    if (wavePattern.id === prevPatternIdRef.current) return;
+    prevPatternIdRef.current = wavePattern.id;
+    burstStartRef.current = performance.now();
   }, [wavePattern.id]);
+
+  useEffect(() => {
+    if (!blobPulse) return undefined;
+    const timer = window.setTimeout(() => setBlobPulse(false), 700);
+    return () => window.clearTimeout(timer);
+  }, [blobPulse, pulsePatternId]);
 
   const blob = wavePattern.blob ?? { top: "42%", left: "-6%", size: "40vw" };
 

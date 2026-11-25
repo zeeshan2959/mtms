@@ -13,7 +13,8 @@ import * as am5 from "@amcharts/amcharts5";
 import * as am5map from "@amcharts/amcharts5/map";
 import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
-import TimezoneCard, { TIMEZONE_COUNTRY_CODES } from "./TimezoneCard";
+import TimezoneCard from "./TimezoneCard";
+import { TIMEZONE_COUNTRY_CODES } from "./timezoneData";
 
 const SUPPORTED_CODES = new Set(Object.keys(TIMEZONE_COUNTRY_CODES));
 
@@ -33,9 +34,11 @@ export default function WorldMapWithList({ showTimezoneTooltip = false }) {
   const [selectedZoneByCountry, setSelectedZoneByCountry] = useState({});
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  showTimezoneTooltipRef.current = showTimezoneTooltip;
-  tooltipHoveredRef.current = tooltipHovered;
-  tooltipPinnedRef.current = tooltipPinned;
+  useLayoutEffect(() => {
+    showTimezoneTooltipRef.current = showTimezoneTooltip;
+    tooltipHoveredRef.current = tooltipHovered;
+    tooltipPinnedRef.current = tooltipPinned;
+  });
 
   const countryList = [
     { code: "IT", name: "Italy" },

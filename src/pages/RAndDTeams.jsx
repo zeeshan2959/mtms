@@ -154,7 +154,6 @@ export default function RAndDTeams() {
     maxWidth: 1919,
   });
   const isWeb = useMediaQuery({ minWidth: 1920 });
-  const isWide = useMediaQuery({ minWidth: 1701 });
 
   useEffect(() => {
     if (!isMobile || !tabsRef.current || !activeTabRef.current) return;

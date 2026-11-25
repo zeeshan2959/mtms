@@ -15,13 +15,6 @@ export default function Topbar() {
     maxWidth: 1919,
   });
   const isWeb = useMediaQuery({ minWidth: 1920 });
-  const logoHeight = isMobile
-    ? 24
-    : isTablet
-      ? 30
-      : isDesktop
-        ? 36
-        : 42;
 
   return (
     <header

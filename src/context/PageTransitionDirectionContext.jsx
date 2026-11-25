@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef } from "react";
+import { createContext, useContext, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 const DEFAULT_PATTERN = {
@@ -11,7 +11,7 @@ const DEFAULT_PATTERN = {
 const PageTransitionDirectionContext = createContext(DEFAULT_PATTERN);
 
 /** Distinct shimmer modes — cycled on every route change */
-export const WAVE_PATTERNS = [
+const WAVE_PATTERNS = [
   { id: "diagonal",      period: 3.0, color: [18, 223, 234], blob: { top: "42%", left: "-6%",  size: "40vw" } },
   { id: "cascade-down",  period: 2.6, color: [20, 228, 238], blob: { top: "68%", left: "18%",  size: "44vw" } },
   { id: "ripple",        period: 4.2, color: [25, 235, 245], blob: { top: "28%", left: "38%",  size: "36vw" } },
@@ -29,18 +29,23 @@ function patternForNavCount(navCount) {
 
 export function PageTransitionDirectionProvider({ children }) {
   const location = useLocation();
-  const prevPathRef = useRef(location.pathname);
-  const navCountRef = useRef(0);
-  const patternRef = useRef(WAVE_PATTERNS[0]);
+  const [transition, setTransition] = useState({
+    path: location.pathname,
+    navCount: 0,
+    pattern: WAVE_PATTERNS[0],
+  });
 
-  if (location.pathname !== prevPathRef.current) {
-    navCountRef.current += 1;
-    patternRef.current = patternForNavCount(navCountRef.current);
-    prevPathRef.current = location.pathname;
+  if (location.pathname !== transition.path) {
+    const navCount = transition.navCount + 1;
+    setTransition({
+      path: location.pathname,
+      navCount,
+      pattern: patternForNavCount(navCount),
+    });
   }
 
   return (
-    <PageTransitionDirectionContext.Provider value={patternRef.current}>
+    <PageTransitionDirectionContext.Provider value={transition.pattern}>
       {children}
     </PageTransitionDirectionContext.Provider>
   );

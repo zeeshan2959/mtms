@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -166,13 +166,15 @@ export default function Sidebar() {
 }
 
 function MobileSidebar() {
-  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { setDirectionForPath } = usePageShift();
+  const [isOpen, setIsOpen] = useState(false);
+  const [menuPath, setMenuPath] = useState(location.pathname);
 
-  useEffect(() => {
+  if (location.pathname !== menuPath) {
+    setMenuPath(location.pathname);
     setIsOpen(false);
-  }, [location.pathname]);
+  }
 
   return (
     <div className="fixed top-[22px] right-[18px] z-[60] lg:hidden">
